@@ -12,7 +12,7 @@ function ButtonLink(props: Props) {
   return (
     <Link
       href={route}
-      className={`${className} px-4 h-9 font-medium text-sm flex items-center rounded-lg`}
+      className={`${className} px-4 h-8 font-medium text-sm flex items-center`}
     >
       {children}
     </Link>
