@@ -8,8 +8,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logout } from "@/src/app/(account)/login/action";
+import { logout } from "@/src/app/login/action";
 import Image from "next/image";
+import Link from "next/link";
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
@@ -33,7 +34,11 @@ function ProfileAvatar() {
         <DropdownMenuLabel>Appearance</DropdownMenuLabel>
 
         <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link className="bg-red-300 w-full" href="/private">
+            Private
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem>
