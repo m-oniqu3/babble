@@ -1,37 +1,39 @@
 "use client";
 
 import Container from "@/src/components/Container";
-import { AddIcon, CloseIcon, EditIcon } from "@/src/components/icons";
-import SubmitShelf from "@/src/components/shelf /SubmitShelf";
+import {
+  AddIcon,
+  CloseIcon,
+  EditIcon,
+  LoadingIcon,
+} from "@/src/components/icons";
 import { createShelf } from "@/src/server-actions/shelf";
 import Image from "next/image";
-import { useRef, useState } from "react";
-import { useFormState } from "react-dom";
+import { useRef, useState, useTransition } from "react";
+
+import Button from "@/src/components/Button";
+import { createShelfSchema, CreateShelfSchema } from "@/utils/validation/shelf";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 type Props = {
   close: () => void;
 };
 
 function CreateShelf({ close }: Props) {
-  const imageRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isCreatingShelf, startCreateShelfTransition] = useTransition();
 
-  const [formState, formAction] = useFormState(createShelf, {
-    errors: {
-      name: [],
-      description: [],
-      private: [],
-      cover: [],
+  const form = useForm<CreateShelfSchema>({
+    resolver: zodResolver(createShelfSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      private: false,
+      cover: null,
     },
   });
-
-  const nameError = formState?.errors.name && formState.errors.name.join(",");
-  const descriptionError =
-    formState?.errors.description && formState.errors.description.join(",");
-  const privateError =
-    formState?.errors.private && formState.errors.private.join(",");
-  const coverError =
-    formState?.errors.cover && formState.errors.cover.join(",");
 
   // iterate over the files and add them to the state
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -41,11 +43,27 @@ function CreateShelf({ close }: Props) {
 
     const file = files[0];
     setFile(file);
+
+    // update react-hook-form
+    form.setValue("cover", file);
   }
 
   function removeImage() {
     setFile(null);
     imageRef.current!.value = "";
+    form.setValue("cover", null);
+  }
+
+  function onSubmitForm(data: CreateShelfSchema) {
+    startCreateShelfTransition(async () => {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description || "");
+      formData.append("private", data.private ? "true" : "false");
+      formData.append("cover", data.cover as File);
+
+      await createShelf(formData);
+    });
   }
 
   return (
@@ -61,13 +79,7 @@ function CreateShelf({ close }: Props) {
         </button>
       </header>
 
-      <form className="space-y-4" action={formAction}>
-        {formState?.errors && (
-          <p className="text-red-500 text-xs">
-            {JSON.stringify(formState.errors)}
-          </p>
-        )}
-
+      <form className="space-y-4" onSubmit={form.handleSubmit(onSubmitForm)}>
         {/* cover */}
         <div className="space-y-1">
           <label htmlFor="cover" className="text-xs font-light">
@@ -102,6 +114,7 @@ function CreateShelf({ close }: Props) {
             </div>
           ) : (
             <button
+              type="button"
               onClick={() => imageRef.current?.click()}
               className="bg-slate-100 h-28 w-28 flex rounded-md
                 items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
@@ -110,10 +123,8 @@ function CreateShelf({ close }: Props) {
             </button>
           )}
 
-          {coverError && <p className="text-red-500 text-xs">{coverError}</p>}
-
           <input
-            name="cover"
+            {...form.register("cover")}
             ref={imageRef}
             type="file"
             accept="image/*"
@@ -122,6 +133,7 @@ function CreateShelf({ close }: Props) {
             onChange={handleImageChange}
             className="hidden"
           />
+          <p className="input-error">{form.formState.errors.cover?.message}</p>
         </div>
 
         {/* name */}
@@ -130,15 +142,13 @@ function CreateShelf({ close }: Props) {
             Shelf Name
           </label>
           <input
-            type="text"
-            name="name"
-            id="name"
+            {...form.register("name")}
             className="bg-slate-100 font-light text-xs h-9 w-full rounded-md px-2 focus:outline-none placeholder:text-xs placeholder:font-light"
             placeholder="romance"
           />
-        </div>
 
-        {nameError && <p className="text-red-500 text-xs">{nameError}</p>}
+          <p className="input-error">{form.formState.errors.name?.message}</p>
+        </div>
 
         {/* description */}
         <div className="space-y-1">
@@ -146,31 +156,51 @@ function CreateShelf({ close }: Props) {
             What is this shelf about?
           </label>
           <textarea
-            id="description"
-            name="description"
+            {...form.register("description")}
             className="bg-slate-100 font-light text-xs h-20 w-full rounded-md p-2 focus:outline-none placeholder:text-xs placeholder:font-light resize-none"
             placeholder="books that had me giggling & kicking my feet at 3 am."
           ></textarea>
+
+          <p className="input-error">
+            {form.formState.errors.description?.message}
+          </p>
         </div>
-        {descriptionError && (
-          <p className="text-red-500 text-xs">{descriptionError}</p>
-        )}
 
         {/* private */}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
-            name="private"
+            {...form.register("private")}
             id="private"
-            value="private"
             className="h-4 w-4 accent-slate-200"
           />
           <label htmlFor="private" className="text-xs font-light h-full mt-0!">
             Is this shelf private?
           </label>
+
+          <p className="input-error">
+            {form.formState.errors.private?.message}
+          </p>
         </div>
-        {privateError && <p className="text-red-500 text-xs">{privateError}</p>}
-        <SubmitShelf />
+
+        <div className="flex justify-end pt-4">
+          <Button
+            disabled={isCreatingShelf}
+            type="submit"
+            className="bg-black text-white rounded-md"
+          >
+            {isCreatingShelf ? (
+              <div className="flex items-center gap-2">
+                Creating
+                <span className="animate-spin text-white">
+                  <LoadingIcon className="size-5" />
+                </span>
+              </div>
+            ) : (
+              "Create"
+            )}
+          </Button>
+        </div>
       </form>
     </Container>
   );

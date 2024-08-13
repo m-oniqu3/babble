@@ -13,4 +13,8 @@
   .wrapper {
     @apply w-[92%] mx-auto md:w-[96%]
   }
+
+  .input-error {
+    @apply text-red-500 text-xs font-light h-4
+  }
 }
