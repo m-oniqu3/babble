@@ -4,6 +4,7 @@ import ButtonLink from "@/src/components/ButtonLink";
 import { AddIcon, SearchIcon } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
 import ProfileAvatar from "@/src/components/profile/ProfileAvatar";
+import CreateShelf from "@/src/components/shelf /CreateShelf";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -48,7 +49,11 @@ function NavButtons({ isLoggedIn }: Props) {
         </>
       )}
 
-      {openCreateShelfModal && <Modal />}
+      {openCreateShelfModal && (
+        <Modal close={() => setOpenCreateShelfModal(false)}>
+          <CreateShelf close={() => setOpenCreateShelfModal(false)} />
+        </Modal>
+      )}
     </>
   );
 }

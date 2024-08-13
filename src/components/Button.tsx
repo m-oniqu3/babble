@@ -14,7 +14,7 @@ function Button(props: Props) {
       type={props.type ?? "button"}
       disabled={props.disabled || false}
       className={`${props.className ?? ""} 
-      rounded-lg px-4 h-9 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed`}
+      rounded-lg px-4 h-8 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed`}
       onClick={props.onClick}
     >
       {props.children}

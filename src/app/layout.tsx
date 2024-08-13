@@ -20,6 +20,7 @@ export default function RootLayout({
       <body className={`${inter.className} text-zinc-700`}>
         <Navbar />
         {children}
+        <div id="modal" />
       </body>
     </html>
   );
