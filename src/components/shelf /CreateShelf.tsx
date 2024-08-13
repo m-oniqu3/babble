@@ -1,11 +1,12 @@
 "use client";
 
-import Button from "@/src/components/Button";
 import Container from "@/src/components/Container";
 import { AddIcon, CloseIcon, EditIcon } from "@/src/components/icons";
+import SubmitShelf from "@/src/components/shelf /SubmitShelf";
 import { createShelf } from "@/src/server-actions/shelf";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { useFormState } from "react-dom";
 
 type Props = {
   close: () => void;
@@ -15,6 +16,23 @@ function CreateShelf({ close }: Props) {
   const imageRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  const [formState, formAction] = useFormState(createShelf, {
+    errors: {
+      name: [],
+      description: [],
+      private: [],
+      cover: [],
+    },
+  });
+
+  const nameError = formState?.errors.name && formState.errors.name.join(",");
+  const descriptionError =
+    formState?.errors.description && formState.errors.description.join(",");
+  const privateError =
+    formState?.errors.private && formState.errors.private.join(",");
+  const coverError =
+    formState?.errors.cover && formState.errors.cover.join(",");
+
   // iterate over the files and add them to the state
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -23,6 +41,11 @@ function CreateShelf({ close }: Props) {
 
     const file = files[0];
     setFile(file);
+  }
+
+  function removeImage() {
+    setFile(null);
+    imageRef.current!.value = "";
   }
 
   return (
@@ -38,7 +61,14 @@ function CreateShelf({ close }: Props) {
         </button>
       </header>
 
-      <form className="space-y-4" action={createShelf}>
+      <form className="space-y-4" action={formAction}>
+        {formState?.errors && (
+          <p className="text-red-500 text-xs">
+            {JSON.stringify(formState.errors)}
+          </p>
+        )}
+
+        {/* cover */}
         <div className="space-y-1">
           <label htmlFor="cover" className="text-xs font-light">
             Shelf Cover
@@ -55,7 +85,7 @@ function CreateShelf({ close }: Props) {
                 </button>
 
                 <button
-                  onClick={() => setFile(null)}
+                  onClick={removeImage}
                   className="bg-white/80 rounded-md p-1 hover:bg-gray-200 transition-colors"
                 >
                   <CloseIcon className="w-4 h-4" />
@@ -63,7 +93,7 @@ function CreateShelf({ close }: Props) {
               </div>
 
               <Image
-                src={URL.createObjectURL(file)}
+                src={file ? URL.createObjectURL(file) : ""}
                 alt="shelf cover"
                 className="h-28 w-28 object-cover rounded-md"
                 width={112}
@@ -79,6 +109,8 @@ function CreateShelf({ close }: Props) {
               <AddIcon />
             </button>
           )}
+
+          {coverError && <p className="text-red-500 text-xs">{coverError}</p>}
 
           <input
             name="cover"
@@ -103,9 +135,10 @@ function CreateShelf({ close }: Props) {
             id="name"
             className="bg-slate-100 font-light text-xs h-9 w-full rounded-md px-2 focus:outline-none placeholder:text-xs placeholder:font-light"
             placeholder="romance"
-            required
           />
         </div>
+
+        {nameError && <p className="text-red-500 text-xs">{nameError}</p>}
 
         {/* description */}
         <div className="space-y-1">
@@ -117,9 +150,11 @@ function CreateShelf({ close }: Props) {
             name="description"
             className="bg-slate-100 font-light text-xs h-20 w-full rounded-md p-2 focus:outline-none placeholder:text-xs placeholder:font-light resize-none"
             placeholder="books that had me giggling & kicking my feet at 3 am."
-            required
           ></textarea>
         </div>
+        {descriptionError && (
+          <p className="text-red-500 text-xs">{descriptionError}</p>
+        )}
 
         {/* private */}
         <div className="flex items-center gap-2">
@@ -134,10 +169,8 @@ function CreateShelf({ close }: Props) {
             Is this shelf private?
           </label>
         </div>
-
-        <Button type="submit" className="bg-black text-white rounded-md">
-          Create
-        </Button>
+        {privateError && <p className="text-red-500 text-xs">{privateError}</p>}
+        <SubmitShelf />
       </form>
     </Container>
   );
