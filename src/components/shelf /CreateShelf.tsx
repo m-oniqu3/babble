@@ -15,6 +15,7 @@ import Button from "@/src/components/Button";
 import { createShelfSchema, CreateShelfSchema } from "@/utils/validation/shelf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type Props = {
   close: () => void;
@@ -54,15 +55,35 @@ function CreateShelf({ close }: Props) {
     form.setValue("cover", null);
   }
 
-  function onSubmitForm(data: CreateShelfSchema) {
+  function onSubmitForm(input: CreateShelfSchema) {
+    // server actions don't accept File objects directly
     startCreateShelfTransition(async () => {
       const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("description", data.description || "");
-      formData.append("private", data.private ? "true" : "false");
-      formData.append("cover", data.cover as File);
+      formData.append("name", input.name);
+      formData.append("description", input.description || "");
+      formData.append("private", input.private ? "true" : "false");
+      formData.append("cover", input.cover as File);
 
-      await createShelf(formData);
+      const { data, errors } = await createShelf(formData);
+
+      console.log("data", data);
+      console.log("errors", errors);
+
+      if (errors) {
+        // set errors on the form
+        if (Array.isArray(errors)) {
+          errors.forEach((error) => {
+            form.setError(error.path, { message: error.message });
+          });
+        }
+      }
+
+      if (data) {
+        toast.success(data);
+        close();
+      }
+
+      // fallback notification to say something went wrong
     });
   }
 
