@@ -44,12 +44,12 @@ function ProfileHeader({ profile, currentUser }: Props) {
 
         <p className="space-x-2 text-sm">
           <span className="font-semibold">{profile.username}@gmail.com</span>
-          <span>{profile.bio}</span>
+          {profile.bio && <span>{profile.bio}</span>}
         </p>
 
         <div className="flex gap-1 items-center ">
           <LogoIcon className="text-zinc-600" />
-          <p className="text-sm lowercase text-zinc-500">{profile.username}</p>
+          <p className="text-sm lowercase text-zinc-600">{profile.username}</p>
         </div>
 
         <div className="flex gap-2 items-center ">

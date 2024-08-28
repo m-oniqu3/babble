@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 async function getUserName(userID: string) {
   const supabase = createClient();
 
-  console.log("userID", userID);
-
   const { data: profileData, error: profileError } = await supabase
     .from("profiles")
     .select("username")
@@ -30,10 +28,10 @@ async function getUserName(userID: string) {
 
 function ProfileLink() {
   const [userID, setUserID] = useState<string>("");
-
   const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
+    //   fetch the user ID
     async function fetchUserID() {
       const supabase = createClient();
       const { data, error } = await supabase.auth.getUser();
@@ -48,15 +46,13 @@ function ProfileLink() {
 
   // when the userID changes, fetch the username
   useEffect(() => {
-    if (!userID) {
-      return;
-    }
+    if (!userID) return;
+
     async function fetchUsername() {
       const username = await getUserName(userID);
 
-      if (!username) {
-        return;
-      }
+      if (!username) return;
+
       setUsername(username);
     }
     fetchUsername();

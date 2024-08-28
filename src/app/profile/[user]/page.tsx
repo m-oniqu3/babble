@@ -1,12 +1,17 @@
-// "use client";
-
+import { getProfile } from "@/src/app/utils/profile";
+import { getShelves } from "@/src/app/utils/shelves";
+import ProfileBody from "@/src/components/profile/ProfileBody";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
-import { Profile } from "@/src/types/profile";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 async function ProfilePage({ params }: { params: { user: string } }) {
+  if (!params.user) {
+    return <p>Profile not found</p>;
+  }
+
   const supabase = createClient();
+
   // protect the route
   const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user) {
@@ -14,43 +19,7 @@ async function ProfilePage({ params }: { params: { user: string } }) {
   }
 
   const currentUser = data.user.id;
-
-  console.log("params", params, params.user);
-
-  async function getProfile(): Promise<Profile | undefined> {
-    const supabase = createClient();
-
-    const { data, error } = await supabase
-      .from("profiles")
-      .select()
-      .eq("username", params.user)
-      .single();
-
-    if (error) {
-      console.error("error", error);
-      return;
-    }
-
-    return data;
-  }
-
-  async function getShelves(userID: string) {
-    const supabase = createClient();
-
-    const { data, error } = await supabase
-      .from("shelves")
-      .select()
-      .eq("user_id", userID);
-
-    if (error) {
-      console.error("error", error);
-      return;
-    }
-
-    return data;
-  }
-
-  const profile = await getProfile();
+  const profile = await getProfile(params.user);
 
   if (!profile) {
     return <p>Profile not found</p>;
@@ -61,16 +30,8 @@ async function ProfilePage({ params }: { params: { user: string } }) {
   return (
     <div>
       <ProfileHeader profile={profile} currentUser={currentUser} />
-      <p>shelves</p>
 
-      <ul>
-        {shelves?.map((shelf) => (
-          <li key={shelf.id}>
-            <p>{shelf.name}</p>
-            <p>{shelf.description}</p>
-          </li>
-        ))}
-      </ul>
+      <ProfileBody shelves={shelves} currentUser={currentUser} />
     </div>
   );
 }

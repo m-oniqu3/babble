@@ -39,11 +39,29 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
   };
 
+  const randomNumber = Math.floor(Math.random() * 10000);
+
+  const username = `${data.email.split("@")[0]}${randomNumber}`;
+
   console.log(data);
-  const { error } = await supabase.auth.signUp(data);
+  const { error, data: userData } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+    options: {
+      data: {
+        username,
+        firstname: data.email.split("@")[0],
+      },
+    },
+  });
 
   if (error) {
     console.log("signin error", error);
+    redirect("/error");
+  }
+
+  if (!userData || !userData.user) {
+    console.log("no user data from signup");
     redirect("/error");
   }
 
