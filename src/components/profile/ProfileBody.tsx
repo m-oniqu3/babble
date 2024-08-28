@@ -1,26 +1,22 @@
-import { Shelves } from "@/src/types/shelves";
-import Link from "next/link";
+import ProfileBodyHeader from "@/src/components/profile/ProfileBodyHeader";
+import ShelvesLayout from "@/src/components/shelf /ShelvesLayout";
 
 type Props = {
-  shelves: Shelves | null;
+  activeProfileID: string;
   currentUser: string;
 };
 
-function ProfileBody({}: Props) {
+function ProfileBody(props: Props) {
+  const { currentUser, activeProfileID } = props;
+
   return (
     <div>
-      <header className="bg-white sticky top-20 z-[1]">
-        <nav className="h-24 wrapper">
-          <ul className="flex justify-center items-center gap-8 h-full text-base">
-            <li className="text-sm">
-              <Link href="#">Created</Link>
-            </li>
-            <li className="text-sm">
-              <Link href="#">Saved</Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
+      <ProfileBodyHeader />
+
+      <ShelvesLayout
+        currentUser={currentUser}
+        activeProfileID={activeProfileID}
+      />
     </div>
   );
 }
