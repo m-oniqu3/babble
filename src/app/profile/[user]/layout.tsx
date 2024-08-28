@@ -1,17 +1,16 @@
 import { getProfile } from "@/src/app/utils/profile";
-import ProfileBody from "@/src/components/profile/ProfileBody";
+import ProfileBodyHeader from "@/src/components/profile/ProfileBodyHeader";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-async function ProfilePage({ params }: { params: { user: string } }) {
-  console.log("params", params);
-  if (!params.user) {
-    return <p>Profile not found</p>;
-  }
+type Props = {
+  children: React.ReactNode;
+  params: { user: string };
+};
 
-  const user = Array.isArray(params.user) ? params.user[0] : params.user;
-
+export default async function ProfileLayout({ children, params }: Props) {
+  const user = params.user;
   const supabase = createClient();
 
   // protect the route
@@ -28,15 +27,11 @@ async function ProfilePage({ params }: { params: { user: string } }) {
   }
 
   return (
-    <div>
+    <section>
       <ProfileHeader profile={profile} currentUser={currentUser} />
+      <ProfileBodyHeader />
 
-      <ProfileBody
-        activeProfileID={profile.user_id}
-        currentUser={currentUser}
-      />
-    </div>
+      {children}
+    </section>
   );
 }
-
-export default ProfilePage;
