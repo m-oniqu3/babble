@@ -1,3 +1,4 @@
+"use client";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 import {
@@ -9,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/src/app/login/action";
+import ProfileLink from "@/src/components/profile/ProfileLink";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,7 +35,9 @@ function ProfileAvatar() {
       <DropdownMenuContent className="w-56 m-4">
         <DropdownMenuLabel>Appearance</DropdownMenuLabel>
 
-        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>
+          <ProfileLink />
+        </DropdownMenuItem>
         <DropdownMenuItem>
           <Link className="bg-red-300 w-full" href="/private">
             Private
