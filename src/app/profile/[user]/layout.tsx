@@ -1,6 +1,6 @@
 import { getProfile } from "@/src/app/utils/profile";
-import ProfileBodyHeader from "@/src/components/profile/ProfileBodyHeader";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
+import ProfileNav from "@/src/components/profile/ProfileNav";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -29,7 +29,7 @@ export default async function ProfileLayout({ children, params }: Props) {
   return (
     <section>
       <ProfileHeader profile={profile} currentUser={currentUser} />
-      <ProfileBodyHeader />
+      <ProfileNav />
 
       {children}
     </section>

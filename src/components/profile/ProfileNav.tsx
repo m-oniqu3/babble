@@ -9,10 +9,12 @@ const links = [
   { href: "saved", text: "Saved" },
 ];
 
-function ProfileBodyHeader() {
+function ProfileNav() {
   const pathname = usePathname();
   // const router = useRouter();
   const searchParams = useSearchParams();
+
+  const search = searchParams.get("page");
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -24,9 +26,20 @@ function ProfileBodyHeader() {
     [searchParams]
   );
 
+  const activeClass = "border-gray-600";
+
   const renderedLinks = links.map((link) => {
+    const isActive =
+      search === link.href || (!search && link.href === "created");
+
     return (
-      <li className="text-sm" key={link.href}>
+      <li
+        className={`text-sm py-1 border-b-[3px] ${
+          isActive ? activeClass : " border-transparent"
+        }
+      `}
+        key={link.href}
+      >
         <Link
           href={pathname + "?" + createQueryString("page", link.href)}
           className="cursor-pointer"
@@ -48,7 +61,7 @@ function ProfileBodyHeader() {
   );
 }
 
-export default ProfileBodyHeader;
+export default ProfileNav;
 
 /**
  *  <p
