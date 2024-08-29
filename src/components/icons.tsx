@@ -40,6 +40,7 @@ export function MenuIcon({ className }: IconProps) {
       height="24"
       color="#000000"
       fill="none"
+      className={className}
     >
       <path
         d="M4 5L20 5"
@@ -128,6 +129,7 @@ export function CloseIcon({ className }: IconProps) {
     </svg>
   );
 }
+
 export function CloseSquareIcon({ className }: IconProps) {
   return (
     <svg

@@ -14,7 +14,7 @@ function ProfileNav() {
   // const router = useRouter();
   const searchParams = useSearchParams();
 
-  const search = searchParams.get("page");
+  const search = searchParams.get("view");
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -41,7 +41,7 @@ function ProfileNav() {
         key={link.href}
       >
         <Link
-          href={pathname + "?" + createQueryString("page", link.href)}
+          href={pathname + "?" + createQueryString("view", link.href)}
           className="cursor-pointer"
         >
           {link.text}

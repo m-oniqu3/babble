@@ -7,7 +7,8 @@ export async function getShelves(userID: string): Promise<Shelves | null> {
   const { data, error } = await supabase
     .from("shelves")
     .select()
-    .eq("user_id", userID);
+    .eq("user_id", userID)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("error", error);

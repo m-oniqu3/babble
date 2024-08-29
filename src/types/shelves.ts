@@ -1,4 +1,4 @@
-export type Shelves = {
+export type Shelf = {
   book_count: number | null;
   cover: string | null;
   created_at: string;
@@ -8,4 +8,6 @@ export type Shelves = {
   name: string;
   private: boolean | null;
   user_id: string;
-}[];
+};
+
+export type Shelves = Shelf[];

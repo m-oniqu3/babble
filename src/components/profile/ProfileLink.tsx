@@ -38,6 +38,9 @@ function ProfileLink() {
       if (error || !data?.user) {
         return;
       }
+
+      let metadata = data.user.user_metadata;
+      console.log(metadata);
       setUserID(data.user.id);
     }
 
