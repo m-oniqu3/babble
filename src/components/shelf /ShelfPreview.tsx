@@ -1,6 +1,6 @@
 "use client";
 
-import { EditIcon } from "@/src/components/icons";
+import { EditIcon, TagIcon } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
 import EditShelf from "@/src/components/shelf /EditShelf";
 import { Shelf } from "@/src/types/shelves";
@@ -35,11 +35,17 @@ function ShelfPreview(props: Props) {
         className="relative cursor-pointer"
       >
         {isAuthUser && isHovering && (
-          <div
-            className="absolute bottom-2 right-2 bg-white/70 rounded-full p-2 cursor-pointer transition-colors hover:bg-white"
-            onClick={handleEditShelfModal}
-          >
-            <EditIcon className="size-4" />
+          <div className="flex gap-2 items-center absolute bottom-2 right-2">
+            <div className="bg-white/70 rounded-full p-2 cursor-pointer transition-colors hover:bg-white">
+              <TagIcon className="size-4" />
+            </div>
+
+            <div
+              className="bg-white/70 rounded-full p-2 cursor-pointer transition-colors hover:bg-white"
+              onClick={handleEditShelfModal}
+            >
+              <EditIcon className="size-4" />
+            </div>
           </div>
         )}
 

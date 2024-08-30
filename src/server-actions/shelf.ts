@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 import { createClient } from "@/utils/supabase/server";
-import { createShelfSchema } from "@/utils/validation/shelf";
+import { createShelfSchema } from "@/utils/validation/createShelf";
 import { revalidatePath } from "next/cache";
 
 // todo move to utils

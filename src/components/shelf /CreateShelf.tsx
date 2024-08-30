@@ -12,7 +12,10 @@ import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 
 import Button from "@/src/components/Button";
-import { createShelfSchema, CreateShelfSchema } from "@/utils/validation/shelf";
+import {
+  createShelfSchema,
+  CreateShelfSchema,
+} from "@/utils/validation/createShelf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
