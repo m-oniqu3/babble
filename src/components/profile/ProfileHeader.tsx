@@ -6,7 +6,7 @@ import Image from "next/image";
 
 type Props = {
   profile: Profile;
-  currentUser: User["id"];
+  currentUser: User["id"] | null;
 };
 
 // <div className="h-[7.5rem] w-[7.5rem] bg-gray-200 rounded-full flex items-center justify-center text-3xl">

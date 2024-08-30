@@ -5,32 +5,48 @@ import ShelfPreview from "@/src/components/shelf /ShelfPreview";
 import { createClient } from "@/utils/supabase/server";
 
 type Props = {
-  activeProfileUsername: string;
+  URLProfileUsername: string;
 };
 
-async function CreatedShelves({ activeProfileUsername }: Props) {
+async function getCurrentUser() {
   const supabase = createClient();
+  console.log("getting current user");
 
-  const profile = await getProfile(activeProfileUsername);
   const { data, error } = await supabase.auth.getUser();
 
-  if (!profile || error || !data?.user) {
-    return <p>User not found</p>;
+  if (error) {
+    return null;
+  }
+  return data.user.id;
+}
+
+async function CreatedShelves({ URLProfileUsername }: Props) {
+  const profile = await getProfile(URLProfileUsername);
+
+  if (!profile) {
+    return <p>Profile not found</p>;
   }
 
-  const shelves = await getShelves(profile.user_id);
+  // promise.all to get user and shelves
+  const [shelves, authUserID] = await Promise.all([
+    getShelves(profile.user_id),
+    getCurrentUser(),
+  ]);
 
   if (!shelves) {
     return <p>No shelves created yet</p>;
   }
 
-  const currentUser = data.user.id;
-  const isCurrentUser = currentUser === profile.user_id;
+  const isAuthUser = authUserID === profile.user_id;
 
   const renderedShelves = shelves.map((shelf) => {
     return (
       <div key={shelf.id}>
-        <ShelfPreview isCurrentUser={isCurrentUser} shelf={shelf} />
+        <ShelfPreview
+          authUserID={authUserID}
+          isAuthUser={isAuthUser}
+          shelf={shelf}
+        />
 
         <div className="py-2">
           <h2 className="font-semibold text-lg">{shelf.name}</h2>

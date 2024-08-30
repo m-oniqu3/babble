@@ -10,17 +10,16 @@ async function ProfilePage({ params, searchParams }: Props) {
     return <p>Profile not found</p>;
   }
 
-  const user = params.user;
   const page = "view" in searchParams ? (searchParams.view as string) : null;
 
   function switchPage(page: string | null) {
     switch (page) {
       case "created":
-        return <CreatedShelves activeProfileUsername={user} />;
+        return <CreatedShelves URLProfileUsername={params.user} />;
       case "saved":
         return <p>Saved page</p>;
       default:
-        return <CreatedShelves activeProfileUsername={user} />;
+        return <CreatedShelves URLProfileUsername={params.user} />;
     }
   }
 
