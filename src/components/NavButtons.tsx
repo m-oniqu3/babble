@@ -4,6 +4,7 @@ import ButtonLink from "@/src/components/ButtonLink";
 import { AddIcon, SearchIcon } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
 import ProfileAvatar from "@/src/components/profile/ProfileAvatar";
+import Search from "@/src/components/Search";
 import CreateShelf from "@/src/components/shelf /CreateShelf";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -21,7 +22,7 @@ function NavButtons({ isLoggedIn }: Props) {
   }
 
   return (
-    <>
+    <div className=" flex gap-2 items-center">
       {pathname !== "/login" && (
         <>
           {!isLoggedIn && (
@@ -34,14 +35,16 @@ function NavButtons({ isLoggedIn }: Props) {
             </div>
           )}
 
+          <Search />
+
           {isLoggedIn && (
             <div className="flex items-center gap-3 ml-auto">
               <p
                 onClick={handleCreateShelfModal}
-                className="flex items-center gap-3 text-sm px-2 h-8 cursor-pointer hover:bg-gray-200"
+                className="flex items-center gap-3 text-sm  px-2 h-8 cursor-pointer rounded-md hover:bg-slate-100"
               >
                 <AddIcon className="w-5 h-5" />
-                Create
+                <span className="hidden xl:block">Create</span>
               </p>
               <ProfileAvatar />
             </div>
@@ -54,7 +57,7 @@ function NavButtons({ isLoggedIn }: Props) {
           <CreateShelf close={() => setOpenCreateShelfModal(false)} />
         </Modal>
       )}
-    </>
+    </div>
   );
 }
 

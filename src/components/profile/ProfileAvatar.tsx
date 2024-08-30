@@ -24,7 +24,7 @@ function ProfileAvatar() {
           <Image
             src="https://picsum.photos/seed/5/200"
             alt="avatar"
-            className="rounded-lg border-4 border-gray-200"
+            className="rounded-lg border-4 border-slate-100"
             width={35}
             height={35}
             priority

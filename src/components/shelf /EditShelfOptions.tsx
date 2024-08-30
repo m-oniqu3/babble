@@ -28,8 +28,7 @@ function EditShelfOptions(props: Props) {
     <>
       <div
         onClick={handleEditShelfModal}
-        className="w-8 h-8 bg-neutral-200 rounded-full flex justify-center items-center cursor-pointer hover:bg-gray-300 transition-colors "
-        // className="bg-zinc-200 rounded-md p-[6px] size-6 cursor-pointer transition-colors hover:bg-zinc-300"
+        className="w-8 h-8 bg-slate-100 rounded-full flex justify-center items-center cursor-pointer hover:bg-slate-200 transition-colors "
       >
         <EditIcon className="size-4 " />
       </div>

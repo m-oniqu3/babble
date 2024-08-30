@@ -9,10 +9,6 @@ type Props = {
   currentUser: User["id"] | null;
 };
 
-// <div className="h-[7.5rem] w-[7.5rem] bg-gray-200 rounded-full flex items-center justify-center text-3xl">
-//   {profile.username.slice(0, 2).toUpperCase()}
-// </div>
-
 function ProfileHeader({ profile, currentUser }: Props) {
   const isCurrentUser = profile.user_id === currentUser;
   return (
@@ -27,17 +23,13 @@ function ProfileHeader({ profile, currentUser }: Props) {
             height={150}
           />
         ) : (
-          <Image
-            src={`https://picsum.photos/seed/${profile.username.length}/200`}
-            alt="avatar"
-            className="h-[7.5rem] w-[7.5rem] object-cover rounded-full "
-            width={150}
-            height={150}
-          />
+          <div className="h-[7.5rem] w-[7.5rem] bg-gray-200 rounded-full font-semibold flex items-center justify-center text-4xl">
+            {profile.username.slice(0, 2).toUpperCase()}
+          </div>
         )}
       </figure>
 
-      <h1 className="font-semibold text-3xl text-black">
+      <h1 className="font-semibold text-2xl text-black sm:text-3xl">
         {profile.firstname + " " + profile.lastname}
       </h1>
 

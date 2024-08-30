@@ -1,7 +1,12 @@
 "use client";
 
 import { formatDate } from "@/src/app/utils/formatDate";
-import { EditIcon, PrivateIcon, TagIcon } from "@/src/components/icons";
+import {
+  BookMarkIcon,
+  EditIcon,
+  PrivateIcon,
+  TagIcon,
+} from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
 import EditShelf from "@/src/components/shelf /EditShelf";
 import { Shelf } from "@/src/types/shelves";
@@ -79,12 +84,20 @@ function ShelfPreview(props: Props) {
               height={9.8 * 16}
             />
           ) : (
-            <div className="h-full w-full bg-gray-200 rounded-xl"></div>
+            <div className="h-full w-full bg-slate-100 rounded-xl"></div>
           )}
         </figure>
 
         <div className="py-2 w-full">
-          <h2 className="font-semibold text-lg line-clamp-1">{shelf.name}</h2>
+          <div className="grid grid-cols-[1fr,40px] items-center gap-1">
+            <h2 className="font-semibold text-lg line-clamp-1 w-full">
+              {shelf.name}
+            </h2>
+
+            <div className="ml-auto cursor-pointer">
+              <BookMarkIcon className="size-5 text-slate-200 hover:text-slate-600 transition-colors" />
+            </div>
+          </div>
           <div className="flex gap-2 items-center">
             <p className="text-xs">{shelf.name.length} Books</p>
             <p className="text-xs text-gray-500">

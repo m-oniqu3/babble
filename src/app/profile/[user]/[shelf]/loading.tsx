@@ -1,9 +1,6 @@
 export default function Loading() {
   return (
     <div className="wrapper flex flex-col gap-2 items-center justify-center text-center my-4 max-w-sm">
-      {/* img  */}
-      <div className="h-[7.5rem] w-[7.5rem] bg-neutral-200 rounded-full" />
-
       {/* <!-- name --> */}
       <div className="h-8 w-36 bg-neutral-200 rounded-sm" />
 
