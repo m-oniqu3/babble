@@ -1,4 +1,3 @@
-import { formatDate } from "@/src/app/utils/formatDate";
 import { getProfile } from "@/src/app/utils/profile";
 import { getShelves } from "@/src/app/utils/shelves";
 import ShelfPreview from "@/src/components/shelf /ShelfPreview";
@@ -39,33 +38,24 @@ async function CreatedShelves({ URLProfileUsername }: Props) {
 
   const isAuthUser = authUserID === profile.user_id;
 
-  const renderedShelves = shelves.map((shelf) => {
-    return (
-      <div key={shelf.id}>
+  const renderedShelves = shelves
+    // only show private shelves to the owner
+    .filter((shelf) => {
+      if (isAuthUser) return shelf;
+      else return !shelf.private;
+    })
+    .map((shelf) => {
+      return (
         <ShelfPreview
+          key={shelf.id}
           authUserID={authUserID}
           isAuthUser={isAuthUser}
           shelf={shelf}
         />
+      );
+    });
 
-        <div className="py-2">
-          <h2 className="font-semibold text-lg">{shelf.name}</h2>
-          <div className="flex gap-2 items-center">
-            <p className="text-xs">{shelf.name.length} Books</p>
-            <p className="text-xs text-gray-500">
-              {formatDate(new Date(shelf.created_at))}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  });
-
-  return (
-    <div>
-      <div className="wrapper shelves-grid">{renderedShelves}</div>
-    </div>
-  );
+  return <div className="wrapper shelves-grid pb-16">{renderedShelves}</div>;
 }
 
 export default CreatedShelves;

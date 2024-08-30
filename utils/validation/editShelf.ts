@@ -11,10 +11,12 @@ const ACCEPTED_FILE_TYPES = [
 export const editShelfSchema = z.object({
   name: z
     .string({ message: "Shelf name is required" })
-    .min(3, "Name should be at least 3 characters"),
+    .min(3, "Name should be at least 3 characters")
+    .max(50, "Name should be at most 50 characters"),
   description: z
     .string()
     .min(10, "Description should be at least 10 characters")
+    .max(300, "Description should be at most 300 characters")
     .optional()
     .or(z.literal("")),
   private: z.coerce.boolean().optional().or(z.literal(false)),

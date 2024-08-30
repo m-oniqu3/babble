@@ -1,4 +1,8 @@
+import { getProfile } from "@/src/app/utils/profile";
+import ProfileHeader from "@/src/components/profile/ProfileHeader";
+import ProfileNav from "@/src/components/profile/ProfileNav";
 import CreatedShelves from "@/src/components/shelf /CreatedShelves";
+import { createClient } from "@/utils/supabase/server";
 
 type Props = {
   params: { user: string };
@@ -7,6 +11,19 @@ type Props = {
 
 async function ProfilePage({ params, searchParams }: Props) {
   if (!params.user) {
+    return <p>Profile not found</p>;
+  }
+
+  const supabase = createClient();
+
+  const [profile, currentUser] = await Promise.all([
+    getProfile(params.user),
+    supabase.auth.getUser(),
+  ]);
+
+  const currentUserID = currentUser.data.user?.id || null;
+
+  if (!profile) {
     return <p>Profile not found</p>;
   }
 
@@ -23,7 +40,14 @@ async function ProfilePage({ params, searchParams }: Props) {
     }
   }
 
-  return <div>{switchPage(page)}</div>;
+  return (
+    <div>
+      <ProfileHeader profile={profile} currentUser={currentUserID} />
+      <ProfileNav />
+
+      {switchPage(page)}
+    </div>
+  );
 }
 
 export default ProfilePage;
