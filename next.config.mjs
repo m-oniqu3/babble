@@ -21,7 +21,16 @@ const nextConfig = {
                 hostname: 'i.pinimg.com',
                 port: '',
                 pathname: '/474x/**',
-            }
+            },
+
+            //open library 
+            {
+                protocol: 'https',
+                hostname: 'covers.openlibrary.org',
+                port: '',
+                pathname: '/b/**',
+            },
+
 
         ]
     }

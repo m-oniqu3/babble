@@ -4,7 +4,7 @@ import ButtonLink from "@/src/components/ButtonLink";
 import { AddIcon, SearchIcon } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
 import ProfileAvatar from "@/src/components/profile/ProfileAvatar";
-import Search from "@/src/components/Search";
+import Search from "@/src/components/search/Search";
 import CreateShelf from "@/src/components/shelf /CreateShelf";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
