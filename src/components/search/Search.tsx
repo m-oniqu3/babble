@@ -142,7 +142,7 @@ function Search() {
 
               {showDropdown && (
                 <SearchDropdown
-                  className="z-40 w-96 absolute top-16 left-0"
+                  className="z-40 max-w-96 absolute top-16 left-0"
                   searchTerm={searchTerm}
                   result={{ isLoading, error, data }}
                   closeDropdown={() => setShowDropdown(false)}

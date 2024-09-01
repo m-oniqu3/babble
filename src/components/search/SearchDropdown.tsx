@@ -68,7 +68,7 @@ function SearchDropdown(props: Props) {
     return (
       <li key={book.key}>
         <Link
-          href={`/book${book.key}`}
+          href={`/book/${book.key.split("/").pop()}`}
           className="grid grid-cols-[50px,1fr] gap-4 px-2 pt-2 border-b-[1px] cursor-pointer border-slate-200 hover:bg-slate-50"
         >
           <Image
