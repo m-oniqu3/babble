@@ -13,10 +13,10 @@ function Modal(props: Props) {
   return (
     <Portal selector="#modal">
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        className="fixed p-4 w-full inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
         onClick={close}
       >
-        <div className="wrapper" onClick={(e) => e.stopPropagation()}>
+        <div className="" onClick={(e) => e.stopPropagation()}>
           {children}
         </div>
       </div>

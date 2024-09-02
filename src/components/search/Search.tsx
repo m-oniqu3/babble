@@ -16,7 +16,6 @@ async function searchBooks(query: string) {
   //limit search to 5 results
   const response = await fetch(`${baseURL}${query}&limit=5`);
   const data = await response.json();
-  console.log(data);
 
   const result = {
     numFound: data.numFound,
@@ -117,7 +116,7 @@ function Search() {
 
             {showDropdown && (
               <SearchDropdown
-                className="hidden sm:block w-72 absolute top-10 left-0 "
+                className="hidden sm:block w-72 absolute top-10 left-0 z-40"
                 searchTerm={searchTerm}
                 result={{ isLoading, error, data }}
                 closeDropdown={() => setShowDropdown(false)}

@@ -1,7 +1,7 @@
 import Editions from "@/src/components/books/Editions";
 import FirstEdition from "@/src/components/books/FirstEdition";
 import BookRatings from "@/src/components/books/Ratings";
-import Button from "@/src/components/Button";
+import ShelfBook from "@/src/components/books/ShelfBook";
 import { EditionsResponse, OpenLibraryWork, Ratings } from "@/src/types/search";
 import Image from "next/image";
 import Link from "next/link";
@@ -62,7 +62,9 @@ function BookDetails(props: Props) {
         className="text-sm capitalize underline-offset-2 cursor-pointer hover:underline"
         key={genre}
       >
-        <Link href={`subject/${encodeURI(genre.toLowerCase())}`}>{genre}</Link>
+        <Link href={`/subject/${encodeURI(genre.toLowerCase().trim())}`}>
+          {genre}
+        </Link>
       </li>
     );
   });
@@ -106,9 +108,8 @@ function BookDetails(props: Props) {
           {ratings && <BookRatings ratings={ratings} />}
         </figcaption>
 
-        <Button className=" bg-black w-32 sm:w-48 md:w-52 h-9 text-white hover:bg-zinc-700 transition-colors">
-          Add to Shelf
-        </Button>
+        {/* todo: just pass the book details you need */}
+        <ShelfBook className="" book={book} />
       </figure>
 
       <div className="flex flex-col gap-3 w-full">
