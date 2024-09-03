@@ -50,6 +50,45 @@ export type Database = {
           },
         ]
       }
+      saved_books: {
+        Row: {
+          book_id: string
+          created_at: string
+          id: number
+          shelf_id: number
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          id?: number
+          shelf_id: number
+          user_id?: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          id?: number
+          shelf_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_books_shelf_id_fkey"
+            columns: ["shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_books_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shelves: {
         Row: {
           book_count: number | null

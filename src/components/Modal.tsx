@@ -16,9 +16,7 @@ function Modal(props: Props) {
         className="fixed p-4 w-full inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
         onClick={close}
       >
-        <div className="" onClick={(e) => e.stopPropagation()}>
-          {children}
-        </div>
+        <>{children}</>
       </div>
     </Portal>
   );

@@ -8,18 +8,18 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
-  book: OpenLibraryWork;
+  bookID: OpenLibraryWork["key"];
   authUserID: string | null;
+  shelvesForBook: { shelf_id: number }[] | null;
 };
 
 function AddToShelfButton(props: Props) {
-  const { book, authUserID } = props;
+  const { bookID, authUserID, shelvesForBook } = props;
   const [openShelfModal, setOpenShelfModal] = useState(false);
 
   function handleClick() {
-    console.log("authUserID", authUserID);
     if (!authUserID) {
-      redirect("/login");
+      return redirect("/login");
     }
 
     setOpenShelfModal((state) => !state);
@@ -35,12 +35,19 @@ function AddToShelfButton(props: Props) {
         onClick={handleClick}
         className=" bg-black w-32 sm:w-48 md:w-52 h-9 text-white hover:bg-zinc-700 transition-colors"
       >
-        Add to Shelf
+        {!shelvesForBook || shelvesForBook?.length === 0
+          ? "Add to Shelf"
+          : "Saved"}
       </Button>
 
       {openShelfModal && (
         <Modal close={closeModal}>
-          <UserShelves close={closeModal} authUserID={authUserID} book={book} />
+          <UserShelves
+            close={closeModal}
+            authUserID={authUserID}
+            bookID={bookID}
+            shelvesForBook={shelvesForBook}
+          />
         </Modal>
       )}
     </div>

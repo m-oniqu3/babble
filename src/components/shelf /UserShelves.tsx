@@ -7,16 +7,19 @@ import {
   LoadingIcon,
   SearchIcon,
 } from "@/src/components/icons";
+import { addBookToShelf } from "@/src/server-actions/addBookToShelf";
 import { OpenLibraryWork } from "@/src/types/search";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 type Props = {
   close: () => void;
   authUserID: string | null;
-  book: OpenLibraryWork;
+  bookID: OpenLibraryWork["key"];
+  shelvesForBook: { shelf_id: number }[] | null;
 };
 
 async function getUserShelves(authUserID: string | null) {
@@ -39,7 +42,7 @@ async function getUserShelves(authUserID: string | null) {
 }
 
 function UserShelves(props: Props) {
-  const { authUserID, close } = props;
+  const { authUserID, close, shelvesForBook, bookID } = props;
 
   const {
     isLoading,
@@ -47,11 +50,16 @@ function UserShelves(props: Props) {
     data: result,
   } = useSWR("user-shelves", getUserShelves.bind(null, authUserID));
 
+  // shelf ids the book is already in
+  const currentShelfIDsSet = new Set(
+    shelvesForBook?.map((shelf) => shelf.shelf_id)
+  );
+
+  const [isAddingToShelf, startAddingToShelfTransition] = useTransition();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredShelves, setFilteredShelves] = useState(result?.data);
-  const [selectedShelvesIDs, setSelectedShelvesIDs] = useState<Set<number>>(
-    new Set()
-  );
+  const [selectedShelvesIDs, setSelectedShelvesIDs] =
+    useState<Set<number>>(currentShelfIDsSet);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(e.target.value);
@@ -94,54 +102,112 @@ function UserShelves(props: Props) {
     }
   }, [result?.data]);
 
-  const renderShelves = filteredShelves?.map((shelf) => {
-    const isSelected = selectedShelvesIDs.has(shelf.id);
+  const renderShelves = filteredShelves
+    ?.toSorted(
+      // sort by if the shelf ID is in the currentShelfIDsSet
+      (a, b) => {
+        const aIsSelected = currentShelfIDsSet.has(a.id);
+        const bIsSelected = currentShelfIDsSet.has(b.id);
 
-    return (
-      <li
-        key={shelf.id}
-        className="grid grid-cols-[40px,1fr,32px] gap-4 h-10 items-center"
-      >
-        {shelf.cover && (
-          <Image
-            src={shelf.cover}
-            alt={shelf.name}
-            width={40}
-            height={40}
-            quality={100}
-            priority
-            unoptimized
-            className="rounded-md size-10 object-cover bg-slate-100"
-          />
-        )}
+        if (aIsSelected && !bIsSelected) return -1;
+        if (!aIsSelected && bIsSelected) return 1;
 
-        {!shelf.cover && (
-          <div className="rounded-md size-10 bg-slate-100"></div>
-        )}
+        return 0;
+      }
+    )
+    .map((shelf) => {
+      const isSelected = selectedShelvesIDs.has(shelf.id);
 
-        <p className="text-sm font-medium line-clamp-1">{shelf.name}</p>
+      return (
+        <li
+          key={shelf.id}
+          className="grid grid-cols-[40px,1fr,32px] gap-4 h-10 items-center"
+        >
+          {shelf.cover && (
+            <Image
+              src={shelf.cover}
+              alt={shelf.name}
+              width={40}
+              height={40}
+              quality={100}
+              priority
+              unoptimized
+              className="rounded-md size-10 object-cover bg-slate-100"
+            />
+          )}
 
-        {!isSelected ? (
-          <div
-            className="cursor-pointer"
-            onClick={handleShelfSelection.bind(null, shelf.id)}
-          >
-            <AddCircleOutline className="size-5 text-zinc-400" />
-          </div>
-        ) : (
-          <div
-            className="cursor-pointer"
-            onClick={handleShelfSelection.bind(null, shelf.id)}
-          >
-            <AddCircleSolid className="size-5 text-black" />
-          </div>
-        )}
-      </li>
+          {!shelf.cover && (
+            <div className="rounded-md size-10 bg-slate-100"></div>
+          )}
+
+          <p className="text-sm font-medium line-clamp-1">{shelf.name}</p>
+
+          {!isSelected ? (
+            <div
+              className="cursor-pointer"
+              onClick={handleShelfSelection.bind(null, shelf.id)}
+            >
+              <AddCircleOutline className="size-5 text-zinc-400" />
+            </div>
+          ) : (
+            <div
+              className="cursor-pointer"
+              onClick={handleShelfSelection.bind(null, shelf.id)}
+            >
+              <AddCircleSolid className="size-5 text-black" />
+            </div>
+          )}
+        </li>
+      );
+    });
+
+  // were there any changes to the selected shelves
+  // selectedShelvesIDs & currentShelves !== to each other
+  const shelvesSelectionChanged =
+    selectedShelvesIDs.difference(currentShelfIDsSet).size > 0 ||
+    currentShelfIDsSet.difference(selectedShelvesIDs).size > 0;
+
+  async function handleSubmit() {
+    if (!authUserID || !bookID) return;
+
+    // get the shelves the book is not in
+    const shelvesToAdd = Array.from(
+      selectedShelvesIDs.difference(currentShelfIDsSet)
     );
-  });
+
+    // get the shelves the book is in
+    const shelvesToRemove = Array.from(
+      currentShelfIDsSet.difference(selectedShelvesIDs)
+    );
+
+    startAddingToShelfTransition(async () => {
+      const formData = new FormData();
+      formData.append("bookID", bookID);
+      formData.append("userID", authUserID);
+      formData.append("shelvesToAdd", JSON.stringify(shelvesToAdd));
+      formData.append("shelvesToRemove", JSON.stringify(shelvesToRemove));
+
+      const { data, error } = await addBookToShelf(formData);
+
+      if (error) {
+        toast.error(error);
+      }
+
+      if (data) {
+        toast.message("Success", {
+          description: data,
+        });
+        close();
+      }
+    });
+  }
 
   return (
-    <Container className="p-0 h-[27rem] max-w-sm relative">
+    <Container
+      className="p-0 wrapper h-[27rem] sm:w-[24rem] max-w-sm relative "
+      style={{ padding: 0 }}
+      onClick={(e) => e.stopPropagation()}
+    >
       <header className="flex flex-col gap-1 border-b border-slate-100 p-4 pb-2">
         <h2 className="text-xs font-semibold">Add to Shelf</h2>
 
@@ -199,6 +265,25 @@ function UserShelves(props: Props) {
         <Button onClick={close} className="text-xs">
           Cancel
         </Button>
+        {shelvesSelectionChanged && (
+          <Button
+            disabled={isAddingToShelf}
+            type="submit"
+            onClick={handleSubmit}
+            className="text-xs ml-2 bg-black text-white"
+          >
+            {isAddingToShelf ? (
+              <div className="flex items-center gap-2">
+                Saving
+                <span className="animate-spin text-white">
+                  <LoadingIcon className="size-5" />
+                </span>
+              </div>
+            ) : (
+              "Save"
+            )}
+          </Button>
+        )}
       </footer>
     </Container>
   );

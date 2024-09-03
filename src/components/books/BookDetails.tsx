@@ -109,7 +109,7 @@ function BookDetails(props: Props) {
         </figcaption>
 
         {/* todo: just pass the book details you need */}
-        <ShelfBook className="" book={book} />
+        <ShelfBook className="" bookID={book.key.split("/").pop()!} />
       </figure>
 
       <div className="flex flex-col gap-3 w-full">

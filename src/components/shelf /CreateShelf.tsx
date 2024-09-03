@@ -91,7 +91,10 @@ function CreateShelf({ close }: Props) {
   }
 
   return (
-    <Container>
+    <Container
+      className=" w-full max-w-md"
+      onClick={(e) => e.stopPropagation()}
+    >
       <header className="relative mb-4">
         <h1 className="text-lg font-semibold">Create Shelf</h1>
         <p className="text-xs font-light">

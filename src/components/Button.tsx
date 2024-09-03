@@ -1,13 +1,13 @@
-type Props = {
+type Props<T extends (...args: any) => any> = {
   children: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset" | undefined;
   disabled?: boolean | undefined;
-  onClick?: () => void | undefined;
+  onClick?: T | undefined;
   style?: React.CSSProperties;
 };
 
-function Button(props: Props) {
+function Button<T extends (...args: any) => any>(props: Props<T>) {
   return (
     <button
       style={props.style ?? {}}
