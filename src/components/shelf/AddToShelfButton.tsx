@@ -12,10 +12,11 @@ type Props = {
   bookID: OpenLibraryWork["key"];
   authUserID: string | null;
   shelvesForBook: { shelf_id: number }[] | null;
+  coverID: number | undefined;
 };
 
 function AddToShelfButton(props: Props) {
-  const { bookID, authUserID, shelvesForBook } = props;
+  const { bookID, authUserID, shelvesForBook, coverID } = props;
   const [openShelfModal, setOpenShelfModal] = useState(false);
 
   function handleClick() {
@@ -48,6 +49,7 @@ function AddToShelfButton(props: Props) {
             authUserID={authUserID}
             bookID={bookID}
             shelvesForBook={shelvesForBook}
+            coverID={coverID}
           />
         </Modal>
       )}

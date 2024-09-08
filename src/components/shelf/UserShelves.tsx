@@ -20,8 +20,10 @@ type Props = {
   authUserID: string | null;
   bookID: OpenLibraryWork["key"];
   shelvesForBook: { shelf_id: number }[] | null;
+  coverID: number | undefined;
 };
 
+// get the shelves for the logged in user
 async function getUserShelves(authUserID: string | null) {
   if (!authUserID) {
     return { data: null, error: "User not authenticated" };
@@ -186,6 +188,7 @@ function UserShelves(props: Props) {
       formData.append("userID", authUserID);
       formData.append("shelvesToAdd", JSON.stringify(shelvesToAdd));
       formData.append("shelvesToRemove", JSON.stringify(shelvesToRemove));
+      formData.append("coverID", props.coverID?.toString() ?? "");
 
       const { data, error } = await addBookToShelf(formData);
 

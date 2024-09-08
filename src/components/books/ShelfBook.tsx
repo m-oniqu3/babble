@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 type Props = {
   className?: string | undefined;
   bookID: OpenLibraryWork["key"];
+  coverID: number | undefined;
 };
 
 async function getShelvesForBook(userID: string | null, bookID: string) {
@@ -29,7 +30,7 @@ async function getShelvesForBook(userID: string | null, bookID: string) {
 }
 
 async function ShelfBook(props: Props) {
-  const { className = "", bookID } = props;
+  const { className = "", bookID, coverID } = props;
   const supabase = createClient();
 
   const { data } = await supabase.auth.getUser();
@@ -43,6 +44,7 @@ async function ShelfBook(props: Props) {
         bookID={bookID}
         authUserID={userID}
         shelvesForBook={shelvesForBook}
+        coverID={coverID}
       />
     </div>
   );

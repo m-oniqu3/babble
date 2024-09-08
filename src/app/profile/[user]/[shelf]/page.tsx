@@ -4,6 +4,12 @@ import ShelfHeader from "@/src/components/shelf/ShelfHeader";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
+/**
+ *
+ * @param user string | null
+ * @param shelfName string
+ * @description Get the shelf by the user and the shelf name
+ */
 async function getShelfByUserAndName(user: string | null, shelfName: string) {
   if (!user) return null;
 
@@ -26,7 +32,7 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-async function page({ params, searchParams }: Props) {
+async function page({ params }: Props) {
   // if the user or shelf is not provided, redirect to the home page
   if (!params.user || !params.shelf) {
     return redirect("/");

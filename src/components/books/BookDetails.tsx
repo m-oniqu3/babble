@@ -38,6 +38,7 @@ function BookDetails(props: Props) {
     ? `${openLibraryCoverBaseURL}${originalBookCover}-L.jpg`
     : null;
 
+  const coverID = originalBookCover ?? firstEditionWithCover?.covers?.[0];
   const coverImageURL = OGCoverImageURL ?? firstEditionCoverImageURL;
 
   // split subjects and remove duplicates and NYT genres
@@ -109,7 +110,11 @@ function BookDetails(props: Props) {
         </figcaption>
 
         {/* todo: just pass the book details you need */}
-        <ShelfBook className="" bookID={book.key.split("/").pop()!} />
+        <ShelfBook
+          className=""
+          bookID={book.key.split("/").pop()!}
+          coverID={coverID}
+        />
       </figure>
 
       <div className="flex flex-col gap-3 w-full">

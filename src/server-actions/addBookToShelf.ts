@@ -14,6 +14,7 @@ export async function addBookToShelf(formData: FormData) {
     userID: formData.get("userID") as string,
     shelvesToAdd: formData.get("shelvesToAdd") as string,
     shelvesToRemove: formData.get("shelvesToRemove") as string,
+    coverID: formData.get("coverID") as string,
   };
 
   if (!values.bookID || !values.userID) {
@@ -58,6 +59,7 @@ export async function addBookToShelf(formData: FormData) {
           user_id: data.user.id,
           book_id: values.bookID,
           shelf_id: shelfID,
+          cover_id: values.coverID,
         },
       ]);
     });
