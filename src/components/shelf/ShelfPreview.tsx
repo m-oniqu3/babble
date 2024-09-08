@@ -8,7 +8,7 @@ import {
   TagIcon,
 } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
-import EditShelf from "@/src/components/shelf /EditShelf";
+import EditShelf from "@/src/components/shelf/EditShelf";
 import { Shelf } from "@/src/types/shelves";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";

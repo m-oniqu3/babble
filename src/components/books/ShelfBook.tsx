@@ -1,4 +1,4 @@
-import AddToShelfButton from "@/src/components/shelf /AddToShelfButton";
+import AddToShelfButton from "@/src/components/shelf/AddToShelfButton";
 import { OpenLibraryWork } from "@/src/types/search";
 import { createClient } from "@/utils/supabase/server";
 

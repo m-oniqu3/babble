@@ -1,7 +1,7 @@
 import { getProfile } from "@/src/app/utils/profile";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
 import ProfileNav from "@/src/components/profile/ProfileNav";
-import CreatedShelves from "@/src/components/shelf /CreatedShelves";
+import CreatedShelves from "@/src/components/shelf/CreatedShelves";
 import { createClient } from "@/utils/supabase/server";
 
 type Props = {

@@ -2,7 +2,8 @@
 
 import Button from "@/src/components/Button";
 import Modal from "@/src/components/Modal";
-import UserShelves from "@/src/components/shelf /UserShelves";
+import UserShelves from "@/src/components/shelf/UserShelves";
+
 import { OpenLibraryWork } from "@/src/types/search";
 import { redirect } from "next/navigation";
 import { useState } from "react";

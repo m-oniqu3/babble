@@ -2,7 +2,7 @@
 
 import { EditIcon } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
-import EditShelf from "@/src/components/shelf /EditShelf";
+import EditShelf from "@/src/components/shelf/EditShelf";
 import { useState } from "react";
 
 type Props = {

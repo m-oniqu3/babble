@@ -1,5 +1,5 @@
 import { PrivateIcon } from "@/src/components/icons";
-import EditShelfOptions from "@/src/components/shelf /EditShelfOptions";
+import EditShelfOptions from "@/src/components/shelf/EditShelfOptions";
 import { Profile } from "@/src/types/profile";
 import { Shelf } from "@/src/types/shelves";
 import Image from "next/image";
