@@ -13,6 +13,10 @@ async function getSubjects(genre: string) {
   const response = await fetch(
     openLibrarySubjectsBaseURL + genre + ".json?details=true&limit=50"
   );
+
+  if (!response.ok || !response.json) {
+    return null;
+  }
   const data = await response.json();
 
   return data as OpenLibrarySubject;

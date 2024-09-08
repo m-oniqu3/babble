@@ -7,7 +7,6 @@ import Image from "next/image";
 type Props = {
   shelf: Shelf;
   profile: Profile;
-
   authUserID: string | null;
 };
 

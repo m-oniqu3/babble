@@ -132,7 +132,10 @@ function EditShelf(props: Props) {
   }
 
   return (
-    <Container className="min-h-[572px]">
+    <Container
+      className="min-h-[572px]"
+      onClick={(e: Event) => e.stopPropagation()}
+    >
       {isLoading && <p>Loading...</p>}
       {error && <p>{error.message}</p>}
 

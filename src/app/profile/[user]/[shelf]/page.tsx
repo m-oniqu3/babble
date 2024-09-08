@@ -1,4 +1,5 @@
 import { getProfile } from "@/src/app/utils/profile";
+import SavedBooksOnShelf from "@/src/components/shelf /SavedBooksOnShelf";
 import ShelfHeader from "@/src/components/shelf /ShelfHeader";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -61,6 +62,11 @@ async function page({ params, searchParams }: Props) {
   return (
     <div>
       <ShelfHeader shelf={shelf} profile={profile} authUserID={authUserID} />
+      <SavedBooksOnShelf
+        URLProfileID={URLProfileID}
+        shelfID={shelf.id}
+        authUserID={authUserID}
+      />
     </div>
   );
 }
