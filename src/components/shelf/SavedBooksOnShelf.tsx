@@ -1,5 +1,5 @@
-import { getBooksByID } from "@/src/app/utils/getBooksOnShelf";
 import BookSnippets from "@/src/components/books/BookSnippets";
+import { getBooksByID } from "@/src/utils/getBooksOnShelf";
 
 type Props = {
   URLProfileID: string;

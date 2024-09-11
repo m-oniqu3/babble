@@ -1,5 +1,5 @@
-import { getBookDetails } from "@/src/app/utils/book";
 import BookDetails from "@/src/components/books/BookDetails";
+import { getBookDetails } from "@/src/utils/book";
 
 type Props = {
   params: { key: string };

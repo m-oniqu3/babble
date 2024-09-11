@@ -1,6 +1,6 @@
-import { getProfile } from "@/src/app/utils/profile";
 import SavedBooksOnShelf from "@/src/components/shelf/SavedBooksOnShelf";
 import ShelfHeader from "@/src/components/shelf/ShelfHeader";
+import { getProfile } from "@/src/utils/profile";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 

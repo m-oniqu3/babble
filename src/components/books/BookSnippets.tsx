@@ -1,9 +1,9 @@
 "use client";
 
-import { openLibraryBaseURL } from "@/src/app/utils/openLibrary";
 import Snippet from "@/src/components/books/Snippet";
 import { LoadingIcon } from "@/src/components/icons";
 import { type BookSnippet } from "@/src/types/books";
+import { openLibraryBaseURL } from "@/src/utils/openLibrary";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
