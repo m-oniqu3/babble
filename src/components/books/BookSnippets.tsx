@@ -1,10 +1,10 @@
 "use client";
 
 import { openLibraryBaseURL } from "@/src/app/utils/openLibrary";
+import Snippet from "@/src/components/books/Snippet";
 import { LoadingIcon } from "@/src/components/icons";
 import { type BookSnippet } from "@/src/types/books";
 import { createClient } from "@/utils/supabase/client";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
@@ -13,10 +13,12 @@ type Props = {
   initialRange: number[];
   URLProfileID: string;
   shelfID: number;
+  authUserID: string | null;
 };
 
 function BookSnippets(props: Props) {
-  const { initialBooks, initialRange, URLProfileID, shelfID } = props;
+  const { initialBooks, initialRange, URLProfileID, shelfID, authUserID } =
+    props;
   const [books, setBooks] = useState<BookSnippet[]>(initialBooks);
   const [range, setRange] = useState<number[]>(initialRange);
   const { ref, inView } = useInView();
@@ -64,37 +66,29 @@ function BookSnippets(props: Props) {
 
   const renderBooks = books.map((book, index) => {
     return (
-      <div key={book.key + index}>
-        <h3>{book.title}</h3>
-
-        {book.cover && (
-          <Image
-            src={`https://covers.openlibrary.org/b/id/${book.cover}-L.jpg`}
-            alt={`Cover of ${book.title}`}
-            width={300}
-            height={350}
-            className="bg-slate-200 object-cover"
-          />
-        )}
-
-        {!book.cover && <div className="bg-slate-200 h-48 w-36"></div>}
-      </div>
+      <Snippet
+        key={index}
+        book={book}
+        URLProfileID={URLProfileID}
+        authUserID={authUserID}
+      />
     );
   });
+
   return (
-    <>
-      <div>{renderBooks}</div>
+    <div className="wrapper">
+      <ul className="snippets-wrapper">{renderBooks}</ul>
 
       {error && <p>{error}</p>}
 
       <div ref={ref} className="h-20 ">
         {isLoading && (
-          <div>
-            <LoadingIcon className="animate-spin size-5 text-gray-500" />
+          <div className="w-full flex justify-center items-center h-full">
+            <LoadingIcon className="animate-spin size-8 text-gray-500" />
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

@@ -10,7 +10,7 @@ type Props = {
 const range: number[] = [0, 2];
 
 async function SavedBooksOnShelf(props: Props) {
-  const { URLProfileID, shelfID } = props;
+  const { URLProfileID, shelfID, authUserID } = props;
 
   const { data, error } = await getBooksByID(URLProfileID, shelfID, range);
 
@@ -30,6 +30,7 @@ async function SavedBooksOnShelf(props: Props) {
         initialRange={range}
         URLProfileID={URLProfileID}
         shelfID={shelfID}
+        authUserID={authUserID}
       />
     </div>
   );

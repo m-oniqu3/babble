@@ -13,8 +13,10 @@ function Button<T extends (...args: any) => any>(props: Props<T>) {
       style={props.style ?? {}}
       type={props.type ?? "button"}
       disabled={props.disabled || false}
-      className={`${props.className ?? ""} 
-      rounded-md px-4 h-8 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed`}
+      className={`
+      rounded-md px-4 h-8 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+        props.className ?? ""
+      } `}
       onClick={props.onClick}
     >
       {props.children}
