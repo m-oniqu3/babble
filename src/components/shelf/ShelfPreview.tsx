@@ -1,6 +1,5 @@
 "use client";
 
-import { formatDate } from "@/src/app/utils/formatDate";
 import {
   BookMarkIcon,
   EditIcon,
@@ -10,6 +9,7 @@ import {
 import Modal from "@/src/components/Modal";
 import EditShelf from "@/src/components/shelf/EditShelf";
 import { Shelf } from "@/src/types/shelves";
+import { formatDate } from "@/src/utils/formatDate";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,7 +35,7 @@ function ShelfPreview(props: Props) {
     setOpenEditShelfModal((state) => !state);
   }
 
-  const encodedShelfName = encodeURI(shelf.name);
+  const encodedShelfName = encodeURIComponent(shelf.name);
   return (
     <>
       <div style={{ width: "14.75rem" }} className="relative">

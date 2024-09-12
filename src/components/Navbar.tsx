@@ -4,11 +4,33 @@ import { createClient } from "@/utils/supabase/server";
 
 import Link from "next/link";
 
-async function Navbar() {
+async function getUser() {
   const supabase = createClient();
-  const { data } = await supabase.auth.getUser();
 
-  const isLogged = !!data?.user;
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error || !data) return;
+
+  const profile = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("user_id", data.user.id)
+    .single();
+
+  if (profile.error) return;
+
+  if (!profile.data?.username) return { userID: data.user.id, username: null };
+
+  return { userID: data.user.id, username: profile.data.username };
+}
+
+async function Navbar() {
+  const user = await getUser();
+
+  const isLogged = !!user?.userID;
+  const username = user?.username;
+
+  console.log(user);
 
   return (
     <>
@@ -27,6 +49,9 @@ async function Navbar() {
                 </li>
                 <li className="text-sm">
                   <Link href="#">Tropes</Link>
+                </li>
+                <li className="text-sm">
+                  <Link href={`/profile/${username}`}>Shelves</Link>
                 </li>
               </ul>
             )}

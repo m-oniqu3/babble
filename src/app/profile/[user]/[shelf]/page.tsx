@@ -22,9 +22,7 @@ async function getShelfByUserAndName(user: string | null, shelfName: string) {
     .eq("name", shelfName)
     .single();
 
-  if (error) throw error;
-
-  return data;
+  return { data, error };
 }
 
 type Props = {
@@ -33,6 +31,7 @@ type Props = {
 };
 
 async function page({ params }: Props) {
+  console.log("params", params);
   // if the user or shelf is not provided, redirect to the home page
   if (!params.user || !params.shelf) {
     return redirect("/");
@@ -59,18 +58,27 @@ async function page({ params }: Props) {
   //get the shelf for the user with urlprofileid
   const shelf = await getShelfByUserAndName(URLProfileID, decodedShelfName);
 
-  const isPrivate = shelf?.private && authUserID !== URLProfileID;
+  if (shelf?.error) {
+    console.error("Error getting shelf", shelf.error);
+    return <p>Error getting shelf</p>;
+  }
 
-  if (!shelf || isPrivate) {
+  const isPrivate = shelf?.data?.private && authUserID !== URLProfileID;
+
+  if (!shelf?.data || isPrivate) {
     return <p>Shelf not found</p>;
   }
 
   return (
     <div>
-      <ShelfHeader shelf={shelf} profile={profile} authUserID={authUserID} />
+      <ShelfHeader
+        shelf={shelf.data}
+        profile={profile}
+        authUserID={authUserID}
+      />
       <SavedBooksOnShelf
         URLProfileID={URLProfileID}
-        shelfID={shelf.id}
+        shelfID={shelf.data.id}
         authUserID={authUserID}
       />
     </div>

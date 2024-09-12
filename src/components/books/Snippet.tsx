@@ -5,6 +5,7 @@ import Modal from "@/src/components/Modal";
 import UserShelves from "@/src/components/shelf/UserShelves";
 import { BookSnippet } from "@/src/types/books";
 import { createClient } from "@/utils/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,8 +16,8 @@ type Props = {
   authUserID: string | null;
 };
 
-async function getShelvesForBook(userID: string | null, bookID: string) {
-  if (!userID) return null;
+async function getShelvesForBookID(userID: string | null, bookID: string) {
+  if (!userID) return;
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -31,7 +32,7 @@ async function getShelvesForBook(userID: string | null, bookID: string) {
     return null;
   }
 
-  if (!data) return null;
+  if (!data) return;
 
   return data;
 }
@@ -46,6 +47,7 @@ function Snippet(props: Props) {
   const router = useRouter();
 
   const bookID = book.key.split("/").pop() as string;
+  const queryClient = useQueryClient();
 
   function handleMouseEnter() {
     if (!authUserID || URLProfileID !== authUserID) {
@@ -53,15 +55,31 @@ function Snippet(props: Props) {
     }
 
     setIsHovering(true);
+
+    // Prefetch the shelves when hovering
+    queryClient.prefetchQuery({
+      queryKey: ["shelves", authUserID, bookID],
+      queryFn: () => getShelvesForBookID(authUserID, bookID),
+    });
   }
+
+  const { data, isError, isLoading, refetch } = useQuery({
+    queryKey: ["shelves", authUserID, bookID],
+    queryFn: () => getShelvesForBookID(authUserID, bookID),
+    enabled: false,
+  });
 
   async function handleShelve() {
     if (!authUserID) return;
 
-    //get shelfIDs for the book
-    const shelvesForBook = await getShelvesForBook(authUserID, bookID);
-    setShelvesForBook(shelvesForBook);
-    setOpenShelfModal((state) => !state);
+    if (!data) {
+      const result = await refetch(); // Refetch if needed
+      setShelvesForBook(result.data || []);
+    } else {
+      setShelvesForBook(data); // Use cached prefetched data
+    }
+
+    setOpenShelfModal(true);
   }
 
   function closeModal() {
@@ -86,6 +104,7 @@ function Snippet(props: Props) {
                 <Button
                   className="bg-white px-4 rounded-lg hover:bg-slate-200 transition-colors"
                   onClick={handleShelve}
+                  disabled={isLoading}
                 >
                   Shelve
                 </Button>
