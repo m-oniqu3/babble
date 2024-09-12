@@ -1,13 +1,15 @@
-import { openLibraryBaseURL } from "@/src/app/utils/openLibrary";
 import { BookSnippet } from "@/src/types/books";
+import { openLibraryBaseURL } from "@/src/utils/openLibrary";
+import { getRange } from "@/src/utils/paginate";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getBooksOnShelf(
   URLProfileID: string,
   shelfID: number,
-  range: number[]
+  page: number
 ) {
   const supabase = createClient();
+  const range = getRange(page, 3);
 
   const { data, error } = await supabase
     .from("saved_books")
@@ -16,7 +18,6 @@ export async function getBooksOnShelf(
     .eq("shelf_id", shelfID)
     .order("created_at", { ascending: false })
     .range(range[0], range[1]);
-
   return { data, error };
 }
 
@@ -61,14 +62,14 @@ export async function getBookSnippetByID(
 export async function getBooksByID(
   URLProfileID: string,
   shelfID: number,
-  range: number[]
+  page: number
 ) {
   try {
-    const { data, error } = await getBooksOnShelf(URLProfileID, shelfID, range);
+    const { data, error } = await getBooksOnShelf(URLProfileID, shelfID, page);
 
     if (error) throw error;
 
-    if (!data) return { data: null, error: null };
+    if (!data) return null;
 
     const IDs = data.map((book) => {
       return {
@@ -79,11 +80,11 @@ export async function getBooksByID(
 
     const books = await getBookSnippetByID(IDs);
 
-    return { data: books, error: null };
+    return books;
   } catch (error: any) {
     console.error("Error fetching books by ids:", error);
 
-    if ("message" in error) return { data: null, error: error.message };
-    else return { data: null, error };
+    if ("message" in error) throw error.message;
+    else throw error;
   }
 }

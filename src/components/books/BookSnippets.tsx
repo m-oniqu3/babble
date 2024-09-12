@@ -1,70 +1,62 @@
 "use client";
 
 import Snippet from "@/src/components/books/Snippet";
-import { LoadingIcon } from "@/src/components/icons";
+import { LoadingIconTwo } from "@/src/components/icons";
+import InfiniteScroll from "@/src/components/InfiniteScroll";
 import { type BookSnippet } from "@/src/types/books";
 import { openLibraryBaseURL } from "@/src/utils/openLibrary";
+import { getRange } from "@/src/utils/paginate";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 type Props = {
-  initialBooks: BookSnippet[];
-  initialRange: number[];
   URLProfileID: string;
   shelfID: number;
   authUserID: string | null;
 };
 
 function BookSnippets(props: Props) {
-  const { initialBooks, initialRange, URLProfileID, shelfID, authUserID } =
-    props;
-  const [books, setBooks] = useState<BookSnippet[]>(initialBooks);
-  const [range, setRange] = useState<number[]>(initialRange);
-  const { ref, inView } = useInView();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { URLProfileID, shelfID, authUserID } = props;
 
-  useEffect(() => {
-    async function loadMoreSavedBooks() {
-      setIsLoading(true);
+  const query = useInfiniteQuery({
+    queryKey: ["books", URLProfileID, shelfID],
+    queryFn: ({ pageParam }) =>
+      getBooksByIDClient(URLProfileID, shelfID, pageParam),
 
-      const start = range[1] + 1;
-      const end = start + 3;
-      try {
-        const newRange = [start, end];
-        const { data, error } = await getBooksByIDClient(
-          URLProfileID,
-          shelfID,
-          newRange
-        );
+    initialPageParam: 0,
 
-        if (error) throw error;
+    getNextPageParam: (lastPage, allPages) => {
+      const nextPage: number | undefined = lastPage?.length
+        ? allPages?.length
+        : undefined;
 
-        if (!data || data.length === 0) {
-          console.error("No books found");
-          return;
-        }
+      return nextPage;
+    },
+  });
 
-        // add the new books to the existing list & update the range
-        setBooks((prev) => [...prev].concat(data));
-        setRange(newRange);
-      } catch (error) {
-        console.error("Error loading more books:", error);
-        setError("Error loading more books");
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  if (query.isLoading) {
+    return (
+      <LoadingIconTwo className="wrapper animate-spin size-7 text-gray-500" />
+    );
+  }
 
-    if (inView) {
-      console.log("Loading more books");
+  if (query.isError) {
+    return (
+      <p className="wrapper">
+        {"message" in query.error ? query.error.message : query.error}
+      </p>
+    );
+  }
 
-      loadMoreSavedBooks();
-    }
-  }, [inView]);
+  if (!query.data || query.data.pages.length === 0) {
+    return (
+      <p>It looks like you haven&apos;t saved any books to this shelf yet.</p>
+    );
+  }
 
-  const renderBooks = books.map((book, index) => {
+  const pages = query.data.pages.flat();
+
+  const renderBooks = pages.map((book, index) => {
     return (
       <Snippet
         key={index}
@@ -77,17 +69,13 @@ function BookSnippets(props: Props) {
 
   return (
     <div className="wrapper">
-      <ul className="snippets-wrapper">{renderBooks}</ul>
-
-      {error && <p>{error}</p>}
-
-      <div ref={ref} className="h-20 ">
-        {isLoading && (
-          <div className="w-full flex justify-center items-center h-full">
-            <LoadingIcon className="animate-spin size-8 text-gray-500" />
-          </div>
-        )}
-      </div>
+      <InfiniteScroll
+        isLoadingIntial={query.isLoading}
+        isLoadingMore={query.isFetchingNextPage}
+        loadMore={() => query.hasNextPage && query.fetchNextPage()}
+      >
+        <ul className="snippets-wrapper">{renderBooks}</ul>
+      </InfiniteScroll>
     </div>
   );
 }
@@ -97,9 +85,10 @@ export default BookSnippets;
 async function getBooksOnShelfClient(
   URLProfileID: string,
   shelfID: number,
-  range: number[]
+  page: number
 ) {
   const supabase = createClient();
+  const range = getRange(page, 10);
 
   const { data, error } = await supabase
     .from("saved_books")
@@ -109,7 +98,6 @@ async function getBooksOnShelfClient(
     .order("created_at", { ascending: false })
     .range(range[0], range[1]);
 
-  console.log("Data sb:", data);
   return { data, error };
 }
 
@@ -154,18 +142,18 @@ async function getBookSnippetByID(
 async function getBooksByIDClient(
   URLProfileID: string,
   shelfID: number,
-  range: number[]
+  page: number
 ) {
   try {
     const { data, error } = await getBooksOnShelfClient(
       URLProfileID,
       shelfID,
-      range
+      page
     );
 
     if (error) throw error;
 
-    if (!data) return { data: null, error: null };
+    if (!data) return [];
 
     const IDs = data.map((book) => {
       return {
@@ -176,11 +164,11 @@ async function getBooksByIDClient(
 
     const books = await getBookSnippetByID(IDs);
 
-    return { data: books, error: null };
+    return books;
   } catch (error: any) {
     console.error("Error fetching books by ids:", error);
 
-    if ("message" in error) return { data: null, error: error.message };
-    else return { data: null, error };
+    if ("message" in error) throw error.message;
+    else throw error;
   }
 }
