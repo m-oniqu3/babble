@@ -33,13 +33,13 @@ function ProfileHeader({ profile, currentUser }: Props) {
         {profile.firstname + " " + profile.lastname}
       </h1>
 
-      <p className="space-x-2 text-sm">
+      <p className="space-x-2 text-sm flex flex-col">
         <span className="font-semibold">{profile.username}@gmail.com</span>
         {profile.bio && <span>{profile.bio}</span>}
       </p>
 
       <div className="flex gap-1 items-center ">
-        <LogoIcon className="text-zinc-600" />
+        <LogoIcon className="text-zinc-600 size-5" />
         <p className="text-sm lowercase text-zinc-600">{profile.username}</p>
       </div>
 

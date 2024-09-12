@@ -10,10 +10,10 @@ import {
 import { addBookToShelf } from "@/src/server-actions/addBookToShelf";
 import { OpenLibraryWork } from "@/src/types/search";
 import { createClient } from "@/utils/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
-import useSWR from "swr";
 
 type Props = {
   close: () => void;
@@ -50,7 +50,10 @@ function UserShelves(props: Props) {
     isLoading,
     error,
     data: result,
-  } = useSWR("user-shelves", getUserShelves.bind(null, authUserID));
+  } = useQuery({
+    queryKey: ["user-shelves"],
+    queryFn: getUserShelves.bind(null, authUserID),
+  });
 
   // shelf ids the book is already in
   const currentShelfIDsSet = new Set(
