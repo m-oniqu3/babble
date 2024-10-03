@@ -1,5 +1,5 @@
 import Navbar from "@/src/components/Navbar";
-import Provider from "@/src/utils/Provider";
+import ReactQueryProvider from "@/src/utils/Provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -20,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} text-zinc-700`}>
-        <Toaster position="bottom-right" />
-        <Navbar />
-        <Provider>{children}</Provider>
-        <div id="modal" />
+        <ReactQueryProvider>
+          <Toaster position="bottom-right" />
+          <Navbar />
+          {children}
+          <div id="modal" />
+        </ReactQueryProvider>
       </body>
     </html>
   );

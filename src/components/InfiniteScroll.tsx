@@ -10,19 +10,19 @@ type Props = {
 
 function InfiniteScroll(props: Props) {
   const observerElement = useRef<HTMLDivElement | null>(null);
+  const { isLoadingIntial, isLoadingMore, children, loadMore } = props;
 
   useEffect(() => {
+    // is element in view?
     function handleIntersection(entries: IntersectionObserverEntry[]) {
       entries.forEach((entry) => {
-        if (
-          entry.isIntersecting &&
-          (!props.isLoadingMore || !props.isLoadingIntial)
-        ) {
-          props.loadMore();
+        if (entry.isIntersecting && (!isLoadingMore || !isLoadingIntial)) {
+          loadMore();
         }
       });
     }
 
+    // create observer instance
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
       rootMargin: "100px",
@@ -33,15 +33,16 @@ function InfiniteScroll(props: Props) {
       observer.observe(observerElement.current);
     }
 
+    // cleanup function
     return () => observer.disconnect();
-  }, [props]);
+  }, [isLoadingMore, isLoadingIntial, loadMore]);
 
   return (
     <>
-      <>{props.children}</>
+      <>{children}</>
 
       <div ref={observerElement} id="obs">
-        {props.isLoadingMore && !props.isLoadingIntial && (
+        {isLoadingMore && !isLoadingIntial && (
           <div className="wrapper flex justify-center items-center h-20">
             <LoadingIconTwo className="animate-spin size-7 " />
           </div>
