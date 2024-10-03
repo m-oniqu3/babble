@@ -1,5 +1,5 @@
-import { openLibrarySubjectsBaseURL } from "@/src/app/utils/openLibrary";
 import { OpenLibrarySubject } from "@/src/types/search";
+import { openLibrarySubjectsBaseURL } from "@/src/utils/openLibrary";
 import Image from "next/image";
 import Link from "next/link";
 
