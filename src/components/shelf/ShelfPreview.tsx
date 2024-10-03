@@ -99,7 +99,13 @@ function ShelfPreview(props: Props) {
             </div>
           </div>
           <div className="flex gap-2 items-center">
-            <p className="text-xs">{shelf.name.length} Books</p>
+            <p className="text-xs">
+              {!shelf.book_count
+                ? "0 books"
+                : shelf.book_count > 1
+                ? `${shelf.book_count} books`
+                : `${shelf.book_count} book`}
+            </p>
             <p className="text-xs text-gray-500">
               {formatDate(new Date(shelf.created_at))}
             </p>

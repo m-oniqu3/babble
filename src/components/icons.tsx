@@ -313,16 +313,15 @@ export function PrivateIcon({ className }: IconProps) {
 export function BookMarkIcon({ className }: IconProps) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
       className={className}
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="currentColor"
+      viewBox="0 0 24 24"
     >
-      <path
-        fillRule="evenodd"
-        d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z"
-        clipRule="evenodd"
-      />
+      <path d="M7.833 2c-.507 0-.98.216-1.318.576A1.92 1.92 0 0 0 6 3.89V21a1 1 0 0 0 1.625.78L12 18.28l4.375 3.5A1 1 0 0 0 18 21V3.889c0-.481-.178-.954-.515-1.313A1.808 1.808 0 0 0 16.167 2H7.833Z" />
     </svg>
   );
 }
@@ -366,20 +365,115 @@ export function AddCircleSolid({ className }: IconProps) {
 export function LoadingIconTwo({ className }: IconProps) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
-      width={24}
-      height={24}
-      color={"#000000"}
-      fill={"none"}
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
+      fill="currentColor"
     >
-      <path
-        d="M18.001 20C16.3295 21.2558 14.2516 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 12.8634 21.8906 13.7011 21.6849 14.5003C21.4617 15.3673 20.5145 15.77 19.6699 15.4728C18.9519 15.2201 18.6221 14.3997 18.802 13.66C18.9314 13.1279 19 12.572 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C13.3197 19 14.554 18.6348 15.6076 18"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <rect x="1" y="1" rx="1" width="10" height="10">
+        <animate
+          id="spinner_c7A9"
+          begin="0;spinner_23zP.end"
+          attributeName="x"
+          dur="0.2s"
+          values="1;13"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_Acnw"
+          begin="spinner_ZmWi.end"
+          attributeName="y"
+          dur="0.2s"
+          values="1;13"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_iIcm"
+          begin="spinner_zfQN.end"
+          attributeName="x"
+          dur="0.2s"
+          values="13;1"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_WX4U"
+          begin="spinner_rRAc.end"
+          attributeName="y"
+          dur="0.2s"
+          values="13;1"
+          fill="freeze"
+        />
+      </rect>
+      <rect x="1" y="13" rx="1" width="10" height="10">
+        <animate
+          id="spinner_YLx7"
+          begin="spinner_c7A9.end"
+          attributeName="y"
+          dur="0.2s"
+          values="13;1"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_vwnJ"
+          begin="spinner_Acnw.end"
+          attributeName="x"
+          dur="0.2s"
+          values="1;13"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_KQuy"
+          begin="spinner_iIcm.end"
+          attributeName="y"
+          dur="0.2s"
+          values="1;13"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_arKy"
+          begin="spinner_WX4U.end"
+          attributeName="x"
+          dur="0.2s"
+          values="13;1"
+          fill="freeze"
+        />
+      </rect>
+      <rect x="13" y="13" rx="1" width="10" height="10">
+        <animate
+          id="spinner_ZmWi"
+          begin="spinner_YLx7.end"
+          attributeName="x"
+          dur="0.2s"
+          values="13;1"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_zfQN"
+          begin="spinner_vwnJ.end"
+          attributeName="y"
+          dur="0.2s"
+          values="13;1"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_rRAc"
+          begin="spinner_KQuy.end"
+          attributeName="x"
+          dur="0.2s"
+          values="1;13"
+          fill="freeze"
+        />
+        <animate
+          id="spinner_23zP"
+          begin="spinner_arKy.end"
+          attributeName="y"
+          dur="0.2s"
+          values="1;13"
+          fill="freeze"
+        />
+      </rect>
     </svg>
   );
 }

@@ -3,7 +3,7 @@ const timeUnits: { [key: string]: string } = {
   minutes: "m",
   hours: "h",
   days: "d",
-  months: "mon",
+  months: "mo",
   years: "y",
 };
 

@@ -80,9 +80,7 @@ async function page({ params }: Props) {
       />
 
       <Suspense
-        fallback={
-          <LoadingIconTwo className="wrapper animate-spin size-7 text-gray-500" />
-        }
+        fallback={<LoadingIconTwo className="wrapper size-7 text-gray-500" />}
       >
         <SavedBooksOnShelf
           URLProfileID={URLProfileID}

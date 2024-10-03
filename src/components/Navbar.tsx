@@ -45,7 +45,7 @@ async function Navbar() {
             {isLogged && (
               <ul className="hidden sm:flex items-center gap-2 ml-2 ">
                 <li className="text-sm">
-                  <Link href="#">Discover</Link>
+                  <Link href="/discover">Discover</Link>
                 </li>
                 <li className="text-sm">
                   <Link href="#">Tropes</Link>

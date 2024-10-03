@@ -44,7 +44,7 @@ function InfiniteScroll(props: Props) {
       <div ref={observerElement} id="obs">
         {isLoadingMore && !isLoadingIntial && (
           <div className="wrapper flex justify-center items-center h-20">
-            <LoadingIconTwo className="animate-spin size-7 " />
+            <LoadingIconTwo className="size-7 " />
           </div>
         )}
       </div>

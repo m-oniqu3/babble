@@ -32,7 +32,11 @@ function ShelfHeader(props: Props) {
 
       <p className="text-[.9rem]">{shelf.description}</p>
       <p className="text-sm ">
-        {shelf.book_count || shelf.name.length}&nbsp;books
+        {!shelf.book_count
+          ? "0 books"
+          : shelf.book_count > 1
+          ? `${shelf.book_count} books`
+          : `${shelf.book_count} book`}
       </p>
 
       {shelf.private && (
