@@ -50,6 +50,7 @@ async function CreatedShelves({ URLProfileUsername }: Props) {
           authUserID={authUserID}
           isAuthUser={isAuthUser}
           shelf={shelf}
+          URLProfileID={profile.user_id}
         />
       );
     });

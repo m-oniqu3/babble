@@ -92,6 +92,52 @@ export type Database = {
           },
         ]
       }
+      shelf_tags: {
+        Row: {
+          created_at: string
+          id: number
+          shelf_id: number
+          tag_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          shelf_id: number
+          tag_id: number
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          shelf_id?: number
+          tag_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelf_tags_shelf_id_fkey"
+            columns: ["shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shelf_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shelf_tags_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shelves: {
         Row: {
           book_count: number | null

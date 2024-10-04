@@ -2,13 +2,20 @@ import Container from "@/src/components/Container";
 import { AddIcon, CloseIcon, LoadingIcon } from "@/src/components/icons";
 import useDebounce from "@/src/hooks/useDebounce";
 import { createTag } from "@/src/server-actions/createTag";
+import { tagShelf } from "@/src/server-actions/tagShelf";
+import { getTagsForShelf } from "@/src/utils/tags/getTagsForShelf";
 import { createClient } from "@/utils/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 type Props = {
   close: () => void;
+  isAuthUser: boolean;
+  shelfID: number;
+  authUserID: string | null;
+
+  URLProfileID: string;
 };
 
 const initialTags = [
@@ -49,13 +56,15 @@ async function findTags(searchInput: string) {
 }
 
 function TagShelf(props: Props) {
-  const { close } = props;
+  const { close, isAuthUser, authUserID, shelfID, URLProfileID } = props;
   const [selectedTags, setSelectedTags] = useState<{ [key: number]: string }>(
     {}
   );
+  const [currentTagIDs, setCurrentTagIDsSet] = useState<Set<number>>(new Set());
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 1000);
   const [isCreatingTag, startCreatingtagTransition] = useTransition();
+  const [isTaggingShelf, startTaggingShelfTransition] = useTransition();
 
   const queryClient = useQueryClient();
   const {
@@ -68,6 +77,40 @@ function TagShelf(props: Props) {
     queryFn: () => findTags(debouncedSearchTerm),
     enabled: debouncedSearchTerm.length > 0,
   });
+
+  const shelfTagsQuery = useQuery({
+    queryKey: ["shelf-tags", shelfID, URLProfileID],
+    queryFn: getTagsForShelf.bind(null, createClient(), shelfID, URLProfileID),
+    enabled: isAuthUser,
+  });
+
+  useEffect(() => {
+    if (shelfTagsQuery.data) {
+      const tags = shelfTagsQuery.data.reduce((acc, tag) => {
+        acc[tag.id] = tag.tag;
+        return acc;
+      }, {} as { [key: number]: string });
+      setSelectedTags(tags);
+
+      const currentTagIDs = new Set(shelfTagsQuery.data.map((tag) => tag.id));
+      setCurrentTagIDsSet(currentTagIDs);
+    }
+  }, [shelfTagsQuery.data]);
+
+  // were there any changes to the selected tags
+  // are the IDs in the selected tags different from the current shelf IDs?
+  const selectedTagsSet = new Set(
+    Object.keys(selectedTags).map((key) => Number(key))
+  );
+  const tagSelectionChanged =
+    selectedTagsSet.difference(currentTagIDs).size > 0 ||
+    currentTagIDs.difference(selectedTagsSet).size > 0;
+
+  // get the new tags to be added
+  const tagsToAdd = Array.from(selectedTagsSet.difference(currentTagIDs));
+
+  // get the tags to be removed
+  const tagsToRemove = Array.from(currentTagIDs.difference(selectedTagsSet));
 
   function handleSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchInput(e.target.value);
@@ -88,6 +131,50 @@ function TagShelf(props: Props) {
     });
   }
 
+  // handle the tagging of the shelf -- add and remove tags
+  function handleSubmitTagShelf() {
+    if (!authUserID || !shelfID || !isAuthUser) {
+      toast.error("You must be logged in to tag a shelf.");
+      return;
+    }
+
+    if (tagsToAdd.length === 0 && tagsToRemove.length === 0) {
+      toast.error("Please select at least one tag.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("shelfID", shelfID.toString());
+    formData.append("tagsToAdd", JSON.stringify(tagsToAdd));
+    formData.append("tagsToRemove", JSON.stringify(tagsToRemove));
+    formData.append("userID", authUserID);
+
+    startTaggingShelfTransition(async () => {
+      const { data, error } = await tagShelf(formData);
+
+      if (error) {
+        toast.error(error);
+      }
+
+      if (data) {
+        toast.message("Success", {
+          description: data,
+        });
+
+        //revalidate the tags for the shelf
+        queryClient.invalidateQueries({
+          queryKey: ["shelf-tags", shelfID, URLProfileID],
+        });
+
+        setSelectedTags({});
+        setSearchInput("");
+        close();
+      }
+    });
+  }
+
+  // handle the creation of a new tag and add it to the selected tags
   function handleSubmitNewTag() {
     if (!searchInput || isCreatingTag) return;
     if (searchInput.trim().length < 3) {
@@ -128,6 +215,12 @@ function TagShelf(props: Props) {
       onClick={(e) => e.stopPropagation()}
     >
       <Container className="relative h-full">
+        {shelfTagsQuery.isLoading && (
+          <div className="w-full flex items-center justify-center">
+            <LoadingIcon className="size-7" />
+          </div>
+        )}
+
         {isCreatingTag && (
           <div className="top-0 left-0 absolute h-full w-full bg-black/60 rounded-lg flex items-center justify-center">
             <LoadingIcon className="size-7 text-white" />
@@ -236,11 +329,13 @@ function TagShelf(props: Props) {
         )}
       </Container>
 
-      {Object.keys(selectedTags).length > 0 && (
+      {/* SELECTED TAGS */}
+
+      {(tagSelectionChanged || !!currentTagIDs.size) && (
         <Container>
           <p className="text-xs pb-2">
-            You have selected {Object.keys(selectedTags).length}{" "}
-            {Object.keys(selectedTags).length > 1 ? "tags" : "tag"}.
+            You have selected {selectedTagsSet.size}{" "}
+            {selectedTagsSet.size === 1 ? "tag" : "tags"}.
           </p>
 
           <ul className="flex flex-wrap gap-2">
@@ -248,18 +343,32 @@ function TagShelf(props: Props) {
               <li
                 key={key}
                 className="bg-slate-100 text-xs font-medium px-2 py-1 rounded-md cursor-pointer flex items-center gap-1"
+                onClick={handleSelectedTags.bind(null, {
+                  id: +key,
+                  name: value,
+                })}
               >
                 #{value}
-                <span
-                  onClick={handleSelectedTags.bind(null, {
-                    id: +key,
-                    name: value,
-                  })}
-                >
+                <span>
                   <CloseIcon className="size-3" />
                 </span>
               </li>
             ))}
+            {tagSelectionChanged && (
+              <button
+                disabled={isTaggingShelf}
+                onClick={handleSubmitTagShelf}
+                className="bg-gray-800 text-white text-xs font-medium px-3 py-1 rounded-md cursor-pointer flex items-center gap-1"
+              >
+                {isTaggingShelf ? (
+                  <>
+                    <LoadingIcon className="size-3" /> Tagging Shelf
+                  </>
+                ) : (
+                  "Tag Shelf"
+                )}
+              </button>
+            )}
           </ul>
         </Container>
       )}
