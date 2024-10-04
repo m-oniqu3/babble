@@ -9,7 +9,6 @@ type Props = {
 
 async function getCurrentUser() {
   const supabase = createClient();
-  console.log("getting current user");
 
   const { data, error } = await supabase.auth.getUser();
 
