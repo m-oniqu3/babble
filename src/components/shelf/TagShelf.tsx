@@ -112,6 +112,10 @@ function TagShelf(props: Props) {
   // get the tags to be removed
   const tagsToRemove = Array.from(currentTagIDs.difference(selectedTagsSet));
 
+  const resultsIncludeSearchInput = results
+    ?.map((entry: { id: number; tag: string }) => entry.tag)
+    .includes(debouncedSearchTerm.trim().split(" ").join("-"));
+
   function handleSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchInput(e.target.value);
   }
@@ -184,7 +188,7 @@ function TagShelf(props: Props) {
 
     startCreatingtagTransition(async () => {
       const formData = new FormData();
-      formData.append("tag", debouncedSearchTerm);
+      formData.append("tag", debouncedSearchTerm.trim());
 
       const { data, error } = await createTag(formData);
 
@@ -222,10 +226,11 @@ function TagShelf(props: Props) {
         )}
 
         {isCreatingTag && (
-          <div className="top-0 left-0 absolute h-full w-full bg-black/60 rounded-lg flex items-center justify-center">
+          <div className="top-0 z-10 left-0 absolute h-full w-full bg-black/60 rounded-lg flex items-center justify-center">
             <LoadingIcon className="size-7 text-white" />
           </div>
         )}
+
         <header className="relative mb-4">
           <h1 className="text-lg font-semibold">Tag Your Shelf</h1>
           <p className="text-xs font-light">
@@ -272,12 +277,14 @@ function TagShelf(props: Props) {
         {/* search results */}
         {debouncedSearchTerm && (
           <div className="mt-4 min-h-16">
+            {/* loading */}
             {isLoading && (
               <div className="w-full flex items-center justify-center">
                 <LoadingIcon className="size-5" />
               </div>
             )}
 
+            {/* error */}
             {isError && (
               <p>
                 {"message" in error
@@ -286,6 +293,7 @@ function TagShelf(props: Props) {
               </p>
             )}
 
+            {/* no results */}
             {!isLoading && !isError && results && results.length === 0 && (
               <div className="">
                 <p className="text-xs pb-2">
@@ -322,6 +330,20 @@ function TagShelf(props: Props) {
                       #{entry.tag}
                     </li>
                   ))}
+
+                  {/* button to add whatever was searched */}
+                  {!resultsIncludeSearchInput &&
+                    debouncedSearchTerm.trim().length > 2 && (
+                      <button
+                        onClick={handleSubmitNewTag}
+                        className="w-fit bg-black text-white text-xs font-medium px-2 py-1 rounded-md flex items-center gap-1 cursor-pointer"
+                      >
+                        #{debouncedSearchTerm.trim().split(" ").join("-")}
+                        <span>
+                          <AddIcon className="size-3 text-white" />
+                        </span>
+                      </button>
+                    )}
                 </ul>
               </>
             )}

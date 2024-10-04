@@ -27,7 +27,7 @@ export async function createTag(formData: FormData) {
 
     const { data: tagData, error: tagError } = await supabase
       .from("tags")
-      .insert([{ tag: tag.split(" ").join("-") }])
+      .insert([{ tag: tag.trim().split(" ").join("-") }])
       .select("id, tag")
       .single();
 
