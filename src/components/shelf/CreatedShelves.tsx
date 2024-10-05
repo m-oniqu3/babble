@@ -9,7 +9,6 @@ type Props = {
 
 async function getCurrentUser() {
   const supabase = createClient();
-  console.log("getting current user");
 
   const { data, error } = await supabase.auth.getUser();
 
@@ -51,6 +50,7 @@ async function CreatedShelves({ URLProfileUsername }: Props) {
           authUserID={authUserID}
           isAuthUser={isAuthUser}
           shelf={shelf}
+          URLProfileID={profile.user_id}
         />
       );
     });

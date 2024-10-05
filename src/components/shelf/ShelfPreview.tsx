@@ -8,8 +8,12 @@ import {
 } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
 import EditShelf from "@/src/components/shelf/EditShelf";
+import TagShelf from "@/src/components/shelf/TagShelf";
 import { Shelf } from "@/src/types/shelves";
 import { formatDate } from "@/src/utils/formatDate";
+import { getTagsForShelf } from "@/src/utils/tags/getTagsForShelf";
+import { createClient } from "@/utils/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,14 +22,18 @@ type Props = {
   authUserID: string | null;
   isAuthUser: boolean;
   shelf: Shelf;
+  URLProfileID: string;
 };
 
 function ShelfPreview(props: Props) {
-  const { isAuthUser, shelf, authUserID } = props;
+  const { isAuthUser, shelf, authUserID, URLProfileID } = props;
   const [isHovering, setIsHovering] = useState(false);
   const [openEditShelfModal, setOpenEditShelfModal] = useState(false);
+  const [openTagModal, setOpenTagModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   function closeEditShelfModal() {
     setOpenEditShelfModal(false);
@@ -35,13 +43,32 @@ function ShelfPreview(props: Props) {
     setOpenEditShelfModal((state) => !state);
   }
 
+  function handleTagModal() {
+    setOpenTagModal((state) => !state);
+  }
+
+  function closeTagModal() {
+    setOpenTagModal(false);
+  }
+
+  function handleMouseEnter() {
+    // we dont check for isAuthUSer because tags are public
+    setIsHovering((state) => !state);
+
+    //prefetch the tags for the shelf
+    queryClient.prefetchQuery({
+      queryKey: ["shelf-tags", shelf.id, URLProfileID],
+      queryFn: () => getTagsForShelf(createClient(), shelf.id, URLProfileID),
+    });
+  }
+
   const encodedShelfName = encodeURIComponent(shelf.name);
   return (
     <>
       <div style={{ width: "14.75rem" }} className="relative">
         <figure
           onClick={() => router.push(`${pathname}/${encodedShelfName}`)}
-          onMouseEnter={() => setIsHovering((state) => !state)}
+          onMouseEnter={handleMouseEnter}
           onMouseLeave={() => setIsHovering(false)}
           style={{ width: "14.75rem", height: "9.8rem" }}
           className="relative cursor-pointer"
@@ -58,7 +85,10 @@ function ShelfPreview(props: Props) {
                 onClick={(e) => e.stopPropagation()}
                 className="flex gap-2 items-center absolute bottom-2 right-2"
               >
-                <div className="bg-white/70 rounded-full p-2 cursor-pointer transition-colors hover:bg-white">
+                <div
+                  className="bg-white/70 rounded-full p-2 cursor-pointer transition-colors hover:bg-white"
+                  onClick={handleTagModal}
+                >
                   <TagIcon className="size-4" />
                 </div>
 
@@ -121,6 +151,19 @@ function ShelfPreview(props: Props) {
             isAuthUser={isAuthUser}
             authUserID={authUserID}
             shelfID={shelf.id}
+          />
+        </Modal>
+      )}
+
+      {/* only show tag modal is user is the owner of the shelf */}
+      {openTagModal && isAuthUser && (
+        <Modal close={closeTagModal}>
+          <TagShelf
+            close={closeTagModal}
+            shelfID={shelf.id}
+            isAuthUser={isAuthUser}
+            authUserID={authUserID}
+            URLProfileID={URLProfileID}
           />
         </Modal>
       )}
