@@ -30,8 +30,6 @@ async function Navbar() {
   const isLogged = !!user?.userID;
   const username = user?.username;
 
-  console.log(user);
-
   return (
     <>
       <header className="wrapper h-16 flex flex-col justify-center">

@@ -8,6 +8,7 @@ export type Shelf = {
   name: string;
   private: boolean | null;
   user_id: string;
+  isBookmarked?: boolean;
 };
 
 export type Shelves = Shelf[];

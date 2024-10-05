@@ -33,7 +33,6 @@ type Props = {
 };
 
 async function page({ params }: Props) {
-  console.log("params", params);
   // if the user or shelf is not provided, redirect to the home page
   if (!params.user || !params.shelf) {
     return redirect("/");

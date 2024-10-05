@@ -92,6 +92,42 @@ export type Database = {
           },
         ]
       }
+      saved_shelves: {
+        Row: {
+          created_at: string
+          id: number
+          shelf_id: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          shelf_id: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          shelf_id?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_shelves_shelf_id_fkey"
+            columns: ["shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_shelves_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shelf_tags: {
         Row: {
           created_at: string
