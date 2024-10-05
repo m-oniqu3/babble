@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  BookMarkIcon,
   EditIcon,
   PrivateIcon,
+  StarIcon,
   TagIcon,
 } from "@/src/components/icons";
 import Modal from "@/src/components/Modal";
@@ -63,6 +63,7 @@ function ShelfPreview(props: Props) {
   }
 
   const encodedShelfName = encodeURIComponent(shelf.name);
+
   return (
     <>
       <div style={{ width: "14.75rem" }} className="relative">
@@ -104,10 +105,7 @@ function ShelfPreview(props: Props) {
 
           {shelf.cover ? (
             <Image
-              src={
-                shelf.cover
-                // `https://picsum.photos/seed/${shelf.name.length + 5}}400/300`
-              }
+              src={shelf.cover}
               alt={shelf.name}
               className="h-full w-full object-cover rounded-xl"
               width={14.75 * 16}
@@ -125,7 +123,7 @@ function ShelfPreview(props: Props) {
             </h2>
 
             <div className="ml-auto cursor-pointer">
-              <BookMarkIcon className="size-5 text-slate-200 hover:text-slate-600 transition-colors" />
+              <StarIcon className="size-5 text-zinc-700 hover:text-slate-600 transition-colors" />
             </div>
           </div>
           <div className="flex gap-2 items-center">
