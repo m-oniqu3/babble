@@ -238,7 +238,7 @@ function TagShelf(props: Props) {
           </p>
 
           <button onClick={close} className="absolute top-0 right-0">
-            <CloseIcon className="w-5 h-5" />
+            <CloseIcon className="size-5" />
           </button>
         </header>
 
@@ -248,9 +248,18 @@ function TagShelf(props: Props) {
             value={searchInput}
             onChange={handleSearchInput}
             className="bg-slate-100 font-light text-xs h-8 w-full rounded-md px-2 focus:outline-none placeholder:text-xs placeholder:font-light"
-            placeholder="romance"
+            placeholder="Search for a tag"
             maxLength={50}
           />
+
+          {debouncedSearchTerm && (
+            <button
+              className="absolute top-1/2 right-2 transform -translate-y-1/2"
+              onClick={() => setSearchInput("")}
+            >
+              <CloseIcon className="size-3" />
+            </button>
+          )}
         </form>
 
         {/* intial tags - only show when there is no search input */}
