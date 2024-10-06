@@ -1,6 +1,7 @@
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
 import ProfileNav from "@/src/components/profile/ProfileNav";
 import CreatedShelves from "@/src/components/shelf/CreatedShelves";
+import SavedShelves from "@/src/components/shelf/SavedShelves";
 import { getProfile } from "@/src/utils/profile";
 import { createClient } from "@/utils/supabase/server";
 
@@ -34,7 +35,7 @@ async function ProfilePage({ params, searchParams }: Props) {
       case "created":
         return <CreatedShelves URLProfileUsername={params.user} />;
       case "saved":
-        return <p>Saved page</p>;
+        return <SavedShelves URLProfileUsername={params.user} />;
       default:
         return <CreatedShelves URLProfileUsername={params.user} />;
     }

@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import { createClient } from "@/utils/supabase/server";
 import { createShelfSchema } from "@/utils/validation/createShelf";
-import { revalidatePath } from "next/cache";
 
 // todo move to utils
 export const transformZodErrors = (error: z.ZodError) => {
@@ -47,7 +46,6 @@ export async function createShelf(formData: FormData) {
       throw error;
     }
 
-    revalidatePath("/"); // todo : change to the shelf page when it's created
     return {
       errors: null,
       data: `Shelf ${data.name} created successfully`,

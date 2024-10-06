@@ -38,7 +38,6 @@ function BookSnippets(props: Props) {
   // }
 
   if (query.isError) {
-    console.log("rq error", query.error);
     return (
       <p className="wrapper">
         {"message" in query.error ? query.error.message : query.error}

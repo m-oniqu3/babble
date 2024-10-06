@@ -1,6 +1,6 @@
-import DisplayCreatedShelves from "@/src/components/shelf/DisplayCreatedShelves";
+import DisplaySavedShelves from "@/src/components/shelf/DisplaySavedShelves";
 import { getProfile } from "@/src/utils/profile";
-import { getCreatedShelves } from "@/src/utils/shelves";
+import { getSavedShelves } from "@/src/utils/shelves";
 import { getCurrentUser } from "@/src/utils/user/get-current-user";
 import { createClient } from "@/utils/supabase/server";
 import {
@@ -13,7 +13,7 @@ type Props = {
   URLProfileUsername: string;
 };
 
-async function CreatedShelves({ URLProfileUsername }: Props) {
+async function SavedShelves({ URLProfileUsername }: Props) {
   const profile = await getProfile(URLProfileUsername);
 
   if (!profile) {
@@ -26,9 +26,9 @@ async function CreatedShelves({ URLProfileUsername }: Props) {
   const authUserID = await getCurrentUser(supabase);
 
   queryClient.prefetchInfiniteQuery({
-    queryKey: ["created-shelves", profile.user_id],
+    queryKey: ["saved-shelves", profile.user_id],
     queryFn: ({ pageParam }) =>
-      getCreatedShelves(supabase, pageParam, profile.user_id, authUserID),
+      getSavedShelves(supabase, pageParam, profile.user_id, authUserID),
     initialPageParam: 0,
   });
 
@@ -36,7 +36,7 @@ async function CreatedShelves({ URLProfileUsername }: Props) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <DisplayCreatedShelves
+      <DisplaySavedShelves
         isAuthUser={isAuthUser}
         URLProfileID={profile.user_id}
         authUserID={authUserID}
@@ -45,4 +45,4 @@ async function CreatedShelves({ URLProfileUsername }: Props) {
   );
 }
 
-export default CreatedShelves;
+export default SavedShelves;
