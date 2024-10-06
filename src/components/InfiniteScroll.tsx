@@ -1,4 +1,4 @@
-import { LoadingIconTwo } from "@/src/components/icons";
+import { LoadingIcon } from "@/src/components/icons";
 import React, { useEffect, useRef } from "react";
 
 type Props = {
@@ -44,7 +44,7 @@ function InfiniteScroll(props: Props) {
       <div ref={observerElement} id="obs">
         {isLoadingMore && !isLoadingIntial && (
           <div className="wrapper flex justify-center items-center h-20">
-            <LoadingIconTwo className="size-7 " />
+            <LoadingIcon className="size-7 " />
           </div>
         )}
       </div>

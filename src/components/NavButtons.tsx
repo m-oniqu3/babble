@@ -11,9 +11,10 @@ import { useState } from "react";
 
 type Props = {
   isLoggedIn: boolean;
+  authUserID: string | null;
 };
 
-function NavButtons({ isLoggedIn }: Props) {
+function NavButtons({ isLoggedIn, authUserID }: Props) {
   const pathname = usePathname();
   const [openCreateShelfModal, setOpenCreateShelfModal] = useState(false);
 
@@ -54,7 +55,10 @@ function NavButtons({ isLoggedIn }: Props) {
 
       {openCreateShelfModal && (
         <Modal close={() => setOpenCreateShelfModal(false)}>
-          <CreateShelf close={() => setOpenCreateShelfModal(false)} />
+          <CreateShelf
+            authUserID={authUserID}
+            close={() => setOpenCreateShelfModal(false)}
+          />
         </Modal>
       )}
     </div>

@@ -90,10 +90,22 @@ function ShelfPreview(props: Props) {
       if (data) {
         toast.success(data);
 
-        // invalidate the query for getting the shelves for the user
-        queryClient.invalidateQueries({
-          queryKey: ["shelves", URLProfileID],
-        });
+        const invalidateQueriesForUser = (userID: string) => {
+          queryClient.invalidateQueries({
+            queryKey: ["saved-shelves", userID],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["created-shelves", userID],
+          });
+        };
+
+        // Invalidate queries for the current profile
+        invalidateQueriesForUser(URLProfileID);
+
+        // If the authenticated user is different, invalidate their queries too
+        if (authUserID !== URLProfileID) {
+          invalidateQueriesForUser(authUserID);
+        }
       }
     });
   }

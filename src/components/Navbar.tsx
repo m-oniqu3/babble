@@ -27,8 +27,9 @@ async function getUser() {
 async function Navbar() {
   const user = await getUser();
 
-  const isLogged = !!user?.userID;
   const username = user?.username;
+  const authUserID = user?.userID || null;
+  const isLogged = !!authUserID;
 
   return (
     <>
@@ -55,7 +56,7 @@ async function Navbar() {
             )}
           </div>
 
-          <NavButtons isLoggedIn={isLogged} />
+          <NavButtons isLoggedIn={isLogged} authUserID={authUserID} />
         </nav>
       </header>
     </>

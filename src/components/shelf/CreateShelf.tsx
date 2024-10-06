@@ -17,17 +17,21 @@ import {
   CreateShelfSchema,
 } from "@/utils/validation/createShelf";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 type Props = {
   close: () => void;
+  authUserID: string | null;
 };
 
-function CreateShelf({ close }: Props) {
+function CreateShelf({ close, authUserID }: Props) {
   const imageRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isCreatingShelf, startCreateShelfTransition] = useTransition();
+
+  const queryClient = useQueryClient();
 
   const form = useForm<CreateShelfSchema>({
     resolver: zodResolver(createShelfSchema),
@@ -83,6 +87,12 @@ function CreateShelf({ close }: Props) {
 
       if (data) {
         toast.success(data);
+
+        // invalidate the created-shelves query
+        queryClient.invalidateQueries({
+          queryKey: ["created-shelves", authUserID],
+        });
+
         close();
       }
 

@@ -2,7 +2,7 @@
 
 import InfiniteScroll from "@/src/components/InfiniteScroll";
 import ShelfPreview from "@/src/components/shelf/ShelfPreview";
-import { getCreatedShelves } from "@/src/utils/shelves";
+import { getSavedShelves } from "@/src/utils/shelves";
 import { createClient } from "@/utils/supabase/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
@@ -12,7 +12,7 @@ type Props = {
   authUserID: string | null;
 };
 
-function DisplayCreatedShelves(props: Props) {
+function DisplaySavedShelves(props: Props) {
   const { isAuthUser, URLProfileID, authUserID } = props;
 
   const supabase = createClient();
@@ -26,9 +26,9 @@ function DisplayCreatedShelves(props: Props) {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["created-shelves", URLProfileID],
+    queryKey: ["saved-shelves", URLProfileID],
     queryFn: ({ pageParam }) =>
-      getCreatedShelves(supabase, pageParam, URLProfileID, authUserID),
+      getSavedShelves(supabase, pageParam, URLProfileID, authUserID),
     initialPageParam: 0,
 
     getNextPageParam: (lastPage, allPages) => {
@@ -41,7 +41,7 @@ function DisplayCreatedShelves(props: Props) {
   });
 
   if (isLoading) {
-    return <p>Loading ... </p>;
+    return <p className="wrapper">Loading ... </p>;
   }
 
   if (isError) {
@@ -93,4 +93,4 @@ function DisplayCreatedShelves(props: Props) {
   );
 }
 
-export default DisplayCreatedShelves;
+export default DisplaySavedShelves;
